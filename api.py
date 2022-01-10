@@ -99,24 +99,42 @@ def current_data(station_id, number_type = "decimal"):
 
 	response = requests.get(api_url, params=payload)
 
-	station_dict = response.json() 
+	station_dict = response.json()
 
-	key_list = []  # field names
-	value_list = [] # values
+	# Expected list order
+	key_list = ['temp', 'heatIndex', 'dewpt', 'windChill', 'windSpeed', 'windGust'
+				, 'pressure', 'precipRate', 'precipTotal', 'elev']
+
+	key_list_sorted = key_list.sort()
+
 
 	for station_info in station_dict['observations']:
-		key_list = [key for key, value in station_info['imperial'].items()]
-		value_list = [value for key, value in station_info['imperial'].items()]
 
-		station_id = station_info['stationID']
-		weather_date = station_info['obsTimeLocal']
+		key_dict = [key for key, value in station_info['imperial'].items()]
+		key_dict_sorted = key_dict.sort()
 
-		# key_list.insert(0, station_info['stationID'])
-		value_list.insert(0, station_id)
-		value_list.insert(1, weather_date)
+		if key_list_sorted == key_dict_sorted:
+			if key_list == key_dict:
+				# print("All Keys exist and are in the correct order")
 
-		# print(key_list)
-		print(value_list)
+				value_list = []  # values
+				value_list = [value for key, value in station_info['imperial'].items()]
+
+				station_id = station_info['stationID']
+				weather_date = station_info['obsTimeLocal']
+
+				# key_list.insert(0, station_info['stationID'])
+				value_list.insert(0, station_id)
+				value_list.insert(1, weather_date)
+
+				print(value_list)
+
+			else:
+				print("All Keys exist but are in the incorrect order")
+		else:
+			print("Some Keys are missing")
+
+
 
 
 def history_day(station_id, search_date = date.today().strftime("%Y%m%d"), number_type = "decimal"):
@@ -127,27 +145,48 @@ def history_day(station_id, search_date = date.today().strftime("%Y%m%d"), numbe
 
 	response = requests.get(api_url, params=payload)
 
-	station_dict = response.json() 
+	station_dict = response.json()
+
+	# Expected list order
+	key_list = ['dewptAvg', 'dewptHigh', 'dewptLow', 'heatindexAvg', 'heatindexHigh', 'heatindexLow'
+				, 'precipRate', 'precipTotal', 'pressureMax', 'pressureMin', 'pressureTrend'
+				, 'tempAvg', 'tempHigh', 'tempLow', 'windchillAvg', 'windchillHigh', 'windchillLow'
+				, 'windgustAvg', 'windgustHigh', 'windgustLow'
+				, 'windspeedAvg', 'windspeedHigh', 'windspeedLow']
+
+	key_list_sorted = key_list.sort()
 
 	# print(station_dict)
 
-	key_list = []  # field names
-	value_list = [] # values
-
 	for station_info in station_dict['observations']:
-		key_list = [key for key, value in station_info['imperial'].items()]
-		value_list = [value for key, value in station_info['imperial'].items()]
 
-		station_id = station_info['stationID']
-		weather_date = station_info['obsTimeLocal']
+		key_dict = [key for key, value in station_info['imperial'].items()]
+		key_dict_sorted = key_dict.sort()
 
-		# key_list.insert(0, station_info['stationID'])
-		value_list.insert(0, station_id)
-		value_list.insert(1, weather_date)
+		print(key_list)
+		print(key_dict)
 
-		# print(key_list)
-		print(search_date)
-		print(value_list)
+
+
+		if key_list_sorted == key_dict_sorted:
+			if key_list == key_dict:
+
+				value_list = []  # values
+				value_list = [value for key, value in station_info['imperial'].items()]
+
+				station_id = station_info['stationID']
+				weather_date = station_info['obsTimeLocal']
+
+				# key_list.insert(0, station_info['stationID'])
+				value_list.insert(0, station_id)
+				value_list.insert(1, weather_date)
+
+				print(value_list)
+
+			else:
+				print("All Keys exist but are in the incorrect order")
+		else:
+			print("Some Keys are missing")
 
 def history_7_day(station_id, number_type = "decimal"):
 
@@ -161,21 +200,23 @@ def history_7_day(station_id, number_type = "decimal"):
 	station_dict = response.json() 
 
 	key_list = []  # field names
-	value_list = [] # values
+	value_list = []  # values
 
 	for station_info in station_dict['summaries']:
 
 		station_id = station_info['stationID']
 		weather_date = station_info['obsTimeLocal']
 
+		print(station_info['imperial'].items())
 
-		key_list = [key for sort_values(key, value) in station_info['imperial'].items()]
-		print(key_list)
+		# # key_list = [key for key, value in station_info['imperial'].items()]
+		# # print(key_list)
 		# key_list = [key for key, value in station_info['imperial'].items()]
 		# value_list = [value for key, value in station_info['imperial'].items()]
-
+		#
 		# value_list.insert(0, station_id)
 		# value_list.insert(1, weather_date)
+
 
 
 		# print(value_list)
@@ -225,8 +266,8 @@ def sort_values(key, value):
 
 if __name__ == "__main__":
 	# current_data("KSCBEAUF63")  # KSCBEAUF63, KSCBEAUF78
-	# history_day("KSCBEAUF63")
-	history_7_day("KSCBEAUF63")
+	history_day("KSCBEAUF63")
+	# history_7_day("KSCBEAUF63")
 	# print(date.today().strftime("%Y%m%d"))
 
 
