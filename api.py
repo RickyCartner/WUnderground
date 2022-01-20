@@ -4,270 +4,108 @@ Import data from WUnderground using API call
 
 import requests
 import json
-from datetime import date
-import sqlite3 
+from datetime import date, datetime, timedelta
+import database
+import sqlite3
+from PyQt5 import uic
 
-class Database:
-	def __init__(self):
-		database_name = "database/weather_data.db"
-		load_date = date.today().isoformat()
-
-	def create_table(self):
-		conn = sqlite3.connect(self.database_name)
-		c = conn.cursor()
-
-	    # c.execute("""CREATE TABLE IF NOT EXISTS tbl_weather_detail (
-					# location VARCHAR(11) PRIMARY KEY NOT NULL,
-					# weather_date DATE NOT NULL,
-
-					# temp_high DECIMAL(3,1),
-					# temp_low DECIMAL(3,1),
-					# temp_avg DECIMAL(3,1),
-
-					# wind_speed_high DECIMAL(3,1),
-					# wind_speed_avg DECIMAL(3,1),
-					# wind_speed_low DECIMAL(3,1),
-
-					# wind_gust_high DECIMAL(3,1),
-					# wind_gust_low DECIMAL(3,1),
-					# wind_gust_avg DECIMAL(3,1),
-
-					# dew_point_high DECIMAL(3,1),
-					# dew_point_low DECIMAL(3,1),
-					# dew_point_avg DECIMAL(3,1),
-
-					# wind_chill_high DECIMAL(3,1),
-					# wind_chill_low DECIMAL(3,1),
-					# wind_chill_avg DECIMAL(3,1),
-
-					# heat_index_high DECIMAL(3,1),
-					# heat_index_low DECIMAL(3,1),
-					# heat_index_avg DECIMAL(3,1),
-
-					# pressure_max DECIMAL(3,1),
-					# pressure_min DECIMAL(3,1),
-					# pressure_trend DECIMAL(3,1)
-
-					# precipitation_rate DECIMAL(3,2),
-					# precipitation_total DECIMAL(3,2),
-
-					# date_added DATE DEFAULT (datetime('now', 'localtime')),
-
-					# UNIQUE (location, weather_date)
-					# )
-		   #      """
-     #    		)
-
-	    # c.execute("SELECT * FROM tbl_history "
-	    #           "WHERE location = ? AND record_date BETWEEN ? AND ?", (location, from_date, to_date))
-
-	    # data_list = c.fetchall()
-
-	    # list_of_strings = [item[0] for item in c.fetchall()]
-
-		conn.commit()
-		conn.close()
-
-		return 
-
-	def insert_data(self, column_list, value_list):
-		conn = sqlite3.connect(self.database_name)
-		c = conn.cursor()
-
-		c.executemany('INSERT INTO tbl_weather_detail (?) VALUES (?)', column_list, value_list)
-
-	    # c.execute("SELECT * FROM tbl_history "
-	    #           "WHERE location = ? AND record_date BETWEEN ? AND ?", (location, from_date, to_date))
-
-	    # data_list = c.fetchall()
-
-	    # list_of_strings = [item[0] for item in c.fetchall()]
-
-		conn.commit()
-		conn.close()
-
-
-API_KEY = "e1f10a1e78da46f5b10a1e78da96f525"  # Found on website
+#API_KEY = "e1f10a1e78da46f5b10a1e78da96f525"  # Found on website
 # API_KEY = "c6a212d5b8d24b8ba212d5b8d21b8b56"  # Assigned
 
-def current_data(station_id, number_type = "decimal"):
+weather_list = []
+'''Return data for a specific day'''
+def history_day(station_id, search_date = date.today().strftime("%Y%m%d")
+				, end_date=date.today().strftime("%Y%m%d"), number_type="decimal"):
 
-	payload = {"stationId": station_id, "format": "json", "units": "e", 
-			"apiKey": API_KEY, "numericPrecision": number_type}
+	# get the api key
+	db = database.DB()
+	api_key = db.fetch_api_key()
 
-	api_url = 'https://api.weather.com/v2/pws/observations/current'
+	while search_date <= end_date:
 
-	response = requests.get(api_url, params=payload)
+		querystring = {"stationId": station_id, "format": "json", "units": "e", "date": search_date,
+						"apiKey": api_key, "numericPrecision": number_type}
 
-	station_dict = response.json()
+		api_url = 'https://api.weather.com/v2/pws/history/daily'
 
-	# Expected list order
-	key_list = ['temp', 'heatIndex', 'dewpt', 'windChill', 'windSpeed', 'windGust'
-				, 'pressure', 'precipRate', 'precipTotal', 'elev']
+		response = requests.get(api_url, params=querystring)
 
-	key_list_sorted = key_list.sort()
+		station_dict = response.json()
 
-
-	for station_info in station_dict['observations']:
-
-		key_dict = [key for key, value in station_info['imperial'].items()]
-		key_dict_sorted = key_dict.sort()
-
-		if key_list_sorted == key_dict_sorted:
-			if key_list == key_dict:
-				# print("All Keys exist and are in the correct order")
-
-				value_list = []  # values
-				value_list = [value for key, value in station_info['imperial'].items()]
-
-				station_id = station_info['stationID']
-				weather_date = station_info['obsTimeLocal']
-
-				# key_list.insert(0, station_info['stationID'])
-				value_list.insert(0, station_id)
-				value_list.insert(1, weather_date)
-
-				print(value_list)
-
-			else:
-				print("All Keys exist but are in the incorrect order")
-		else:
-			print("Some Keys are missing")
-
-
-
-
-def history_day(station_id, search_date = date.today().strftime("%Y%m%d"), number_type = "decimal"):
-	payload = {"stationId": station_id, "format": "json", "units": "e", "date":search_date, 
-			"apiKey": API_KEY, "numericPrecision": number_type}
-
-	api_url = 'https://api.weather.com/v2/pws/history/daily'
-
-	response = requests.get(api_url, params=payload)
-
-	station_dict = response.json()
-
-	# Expected list order
-	key_list = ['dewptAvg', 'dewptHigh', 'dewptLow', 'heatindexAvg', 'heatindexHigh', 'heatindexLow'
-				, 'precipRate', 'precipTotal', 'pressureMax', 'pressureMin', 'pressureTrend'
-				, 'tempAvg', 'tempHigh', 'tempLow', 'windchillAvg', 'windchillHigh', 'windchillLow'
-				, 'windgustAvg', 'windgustHigh', 'windgustLow'
-				, 'windspeedAvg', 'windspeedHigh', 'windspeedLow']
-
-	key_list_sorted = key_list.sort()
-
-	# print(station_dict)
-
-	for station_info in station_dict['observations']:
-
-		key_dict = [key for key, value in station_info['imperial'].items()]
-		key_dict_sorted = key_dict.sort()
-
-		print(key_list)
-		print(key_dict)
-
-
-
-		if key_list_sorted == key_dict_sorted:
-			if key_list == key_dict:
-
-				value_list = []  # values
-				value_list = [value for key, value in station_info['imperial'].items()]
-
-				station_id = station_info['stationID']
-				weather_date = station_info['obsTimeLocal']
-
-				# key_list.insert(0, station_info['stationID'])
-				value_list.insert(0, station_id)
-				value_list.insert(1, weather_date)
-
-				print(value_list)
-
-			else:
-				print("All Keys exist but are in the incorrect order")
-		else:
-			print("Some Keys are missing")
-
-def history_7_day(station_id, number_type = "decimal"):
-
-	payload = {"stationId": station_id, "format": "json", "units": "e", 
-			"apiKey": API_KEY, "numericPrecision": number_type}
-
-	api_url = 'https://api.weather.com/v2/pws/dailysummary/7day'
-
-	response = requests.get(api_url, params=payload)
-
-	station_dict = response.json() 
-
-	key_list = []  # field names
-	value_list = []  # values
-
-	for station_info in station_dict['summaries']:
-
-		station_id = station_info['stationID']
-		weather_date = station_info['obsTimeLocal']
-
-		print(station_info['imperial'].items())
-
-		# # key_list = [key for key, value in station_info['imperial'].items()]
-		# # print(key_list)
-		# key_list = [key for key, value in station_info['imperial'].items()]
-		# value_list = [value for key, value in station_info['imperial'].items()]
+		# Expected list order
+		# key_list = ['dewptAvg', 'dewptHigh', 'dewptLow', 'heatindexAvg', 'heatindexHigh', 'heatindexLow'
+		# 			, 'precipRate', 'precipTotal', 'pressureMax', 'pressureMin', 'pressureTrend'
+		# 			, 'tempAvg', 'tempHigh', 'tempLow', 'windchillAvg', 'windchillHigh', 'windchillLow'
+		# 			, 'windgustAvg', 'windgustHigh', 'windgustLow'
+		# 			, 'windspeedAvg', 'windspeedHigh', 'windspeedLow']
 		#
+		# key_list_sorted = key_list.sort()
+		# selected_env = 'mydev2'
+		# server_list = [{'mydev': ['192.168.56.101', '192.168.56.102', '192.168.56.103']},
+		# 			   {'mydev2': ['192.168.56.104', '192.168.56.105', '192.168.56.106']}]
+		#
+		# server_dict = {k: v for d in server_list for k, v in d.items()}
+		# host_list = server_dict[selected_env]
+		#
+		# print(host_list)
+		# Get a list of Key fields
+		value_list = {}
+		# test_list = ['stationID','obsTimeLocal','imperial']
+		# res = None
+		# if all(sub in [station_dict['observations'], test_list]):
+		# 	res = station_dict['observations'][sub]
+
+		# for k, v in station_dict['observations'] if k:
+		# 	value_list[k] = v
+
+		for p in station_dict['observations']:
+			value_list['stationID'] = p['stationID']
+			value_list['obsTimeLocal'] = p['obsTimeLocal']
+			value_list.update(p['imperial'])
+			# station_id = p['stationID']
+			# weather_date = p['obsTimeLocal']
+			# value_list = p['imperial']
+
+		# print(value_list)
+		# res = {k:v for p in station_dict['observations'] for k, v in p['imperial'].items()}
+		# print(res)
+		# value_list.update('stationID': station_id)
+
+		# station_id = station_dict['observations']['stationID']
+		# weather_date = station_dict['observations']['obsTimeLocal']
+
+		# key_list.insert(0, station_info['stationID'])
+		# value_list.update(station_dict['observations']['stationID'])
+		# value_list.update(station_dict['observations']['obsTimeLocal'])
 		# value_list.insert(0, station_id)
 		# value_list.insert(1, weather_date)
 
+		weather_list.append(value_list)
+		print(weather_list)
 
+		# print(search_date)
+		dto = datetime.strptime(search_date, '%Y%m%d').date()
+		search_date = (dto + timedelta(days=1)).strftime("%Y%m%d")
 
-		# print(value_list)
+		# print("AFTER 5 DAYS DATE WILL BE : ", search_date)
+		# print(date_next)
 
+	db.execute(weather_list)
 
-def sort_values(key, value):
+		# 	else:
+		# 		print("All Keys exist but are in the incorrect order")
+		# else:
+		# 	print("Some Keys are missing")
 
-	print(key, value)
-
-	# location VARCHAR(11) PRIMARY KEY NOT NULL,
-	# 	            weather_date DATE NOT NULL,
-
-	# 	            temp_high DECIMAL(3,1),
-	# 	            temp_low DECIMAL(3,1),
-	# 	            temp_avg DECIMAL(3,1),
-
-	# 	            wind_speed_high DECIMAL(3,1),
-	# 	            wind_speed_avg DECIMAL(3,1),
-	# 	            wind_speed_low DECIMAL(3,1),
-
-	# 	            wind_gust_high DECIMAL(3,1),
-	# 				wind_gust_low DECIMAL(3,1),
-	# 				wind_gust_avg DECIMAL(3,1),
-
-	# 				dew_point_high DECIMAL(3,1),
-	# 	            dew_point_low DECIMAL(3,1),
-	# 	            dew_point_avg DECIMAL(3,1),
-
-	# 				wind_chill_high DECIMAL(3,1),
-	# 				wind_chill_low DECIMAL(3,1),
-	# 				wind_chill_avg DECIMAL(3,1),
-
-	# 				heat_index_high DECIMAL(3,1),
-	# 				heat_index_low DECIMAL(3,1),
-	# 				heat_index_avg DECIMAL(3,1),
-
-	# 				pressure_max DECIMAL(3,1),
-	# 	            pressure_min DECIMAL(3,1),
-	# 	            pressure_trend DECIMAL(3,1)
-
-	# 	            precipitation_rate DECIMAL(3,2),
-	# 	            precipitation_total DECIMAL(3,2),
-
-	# 	            date_added DATE DEFAULT (datetime('now', 'localtime')),
+	db.close()
 
 
 
 if __name__ == "__main__":
-	# current_data("KSCBEAUF63")  # KSCBEAUF63, KSCBEAUF78
-	history_day("KSCBEAUF63")
-	# history_7_day("KSCBEAUF63")
+	# data_list = current_data("KSCBEAUF63")  # KSCBEAUF63, KSCBEAUF78, KCAE (McEntire)
+	data_list = history_day("KSCBEAUF63", '20220117')
+	# data_list = history_7_day("KSCBEAUF63")
+	print(data_list)
 	# print(date.today().strftime("%Y%m%d"))
 
 
