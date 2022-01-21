@@ -9,6 +9,157 @@ from datetime import datetime
 import sqlite3
 
 
+class DB(object):
+    def __init__(self, database='database/weather.db', statements=None):
+        if statements is None:
+            statements = []
+        """Initialize a new or connect to an existing database.
+
+        Accept setup statements to be executed.
+        """
+
+        # the database filename
+        self.database = database
+        # holds incomplete statements
+        self.statement = ''
+        # indicates if selected data is to be returned or printed
+        self.display = False
+
+        self.connect()
+
+        # execute setup statements
+        # self.execute(statements)
+
+        # self.close()
+
+    def connect(self):
+        """Connect to the SQLite3 database."""
+
+        self.connection = sqlite3.connect(self.database)
+        self.cursor = self.connection.cursor()
+        self.connected = True
+        self.statement = ''
+
+    def close(self):
+        """Close the SQLite3 database."""
+
+        self.connection.commit()
+        self.connection.close()
+        self.connected = False
+
+    def fetch_api_key(self):
+
+        self.cursor.execute("SELECT api_key FROM tbl_api_key "
+                             "WHERE primary_api_key = 1")
+
+        api_key = self.cursor.fetchone()
+
+        # self.cursor.execute("select * from SQLite_master")
+
+        # tables = self.cursor.fetchall()
+        #
+        # print("Listing tables and indices from main database:")
+        #
+        # for table in tables:
+        #     print("Type of database object: %s" % (table[0]))
+        #     print("Name of the database object: %s" % (table[1]))
+        #     print("Table Name: %s" % (table[2]))
+        #     print("Root page: %s" % (table[3]))
+        #     print("SQL statement: %s" % (table[4]))
+
+
+        # self.close()
+
+        return api_key
+
+
+    def execute(self, data):
+        sql = '''
+                INSERT OR IGNORE INTO tbl_weather_data ('stationID', 'obsTimeLocal'
+                    , 'tempHigh', 'tempLow', 'tempAvg'
+                    , 'windspeedHigh', 'windspeedLow', 'windspeedAvg'
+                    , 'windgustHigh', 'windgustLow', 'windgustAvg'
+                    , 'dewptHigh', 'dewptLow', 'dewptAvg'
+                    , 'windchillHigh', 'windchillLow', 'windchillAvg'
+                    , 'heatindexHigh', 'heatindexLow', 'heatindexAvg'
+                    , 'pressureMax', 'pressureMin', 'pressureTrend'
+                    , 'precipRate', 'precipTotal')
+                VALUES(:stationID, :obsTimeLocal
+                    , :tempHigh, :tempLow, :tempAvg
+                    , :windspeedHigh, :windspeedLow, :windspeedAvg
+                    , :windgustHigh, :windgustLow, :windgustAvg
+                    , :dewptHigh, :dewptLow, :dewptAvg
+                    , :windchillHigh, :windchillLow, :windchillAvg
+                    , :heatindexHigh, :heatindexLow, :heatindexAvg
+                    , :pressureMax, :pressureMin, :pressureTrend
+                    , :precipRate, :precipTotal)
+            '''
+        self.cursor.executemany(sql, data)
+        self.connection.commit()
+
+    # def execute(self, statements):
+    #     """Execute complete SQL statements.
+    #
+    #     Incomplete statements are concatenated to self.statement until they
+    #     are complete.
+    #
+    #     Selected data is returned as a list of query results. Example:
+    #
+    #     for result in db.execute(queries):
+    #         for row in result:
+    #             print row
+    #     """
+    #
+    #     queries = []
+    #     close = False
+    #     if not self.connected:
+    #         # open a previously closed connection
+    #         self.connect()
+    #         # mark the connection to be closed once complete
+    #         close = True
+    #     if type(statements) == str:
+    #         # all statements must be in a list
+    #         statements = [statements]
+    #     for statement in statements:
+    #         if self.incomplete(statement):
+    #             # the statement is incomplete
+    #             continue
+    #         # the statement is complete
+    #         try:
+    #             statement = self.statement.strip()
+    #             # reset the test statement
+    #             self.statement = ''
+    #             self.cursor.execute(statement)
+    #             # retrieve selected data
+    #             data = self.cursor.fetchall()
+    #             if statement.upper().startswith('SELECT'):
+    #                 # append query results
+    #                 queries.append(data)
+    #
+    #         except sqlite3.Error as error:
+    #             print
+    #             'An error occurred:', error.args[0]
+    #             print
+    #             'For the statement:', statement
+    #
+    #     # only close the connection if opened in this function
+    #     if close:
+    #         self.close()
+    #         # print results for all queries
+    #     if self.display:
+    #         for result in queries:
+    #             if result:
+    #                 for row in result:
+    #                     print
+    #                     row
+    #             else:
+    #                 print
+    #                 result
+    #     # return results for all queries
+    #     else:
+    #         return queries
+
+
 def create_location_table():
     """Create the location table in the database."""
     create_table_query = QSqlQuery()
@@ -23,6 +174,48 @@ def create_location_table():
             date_added DATE
         )
         """
+    )
+
+    create_table_query.finish()
+
+
+def create_weather_data_table():
+
+    create_table_query = QSqlQuery()
+
+    create_table_query.exec(
+        """
+        CREATE TABLE tbl_weather_data (
+            'stationID' VARCHAR(11) NOT NULL
+            , 'obsTimeLocal' DATE
+            , 'tempHigh' DECIMAL(3,1)
+            , 'tempLow' DECIMAL(3,1)
+            , 'tempAvg' DECIMAL(3,1)
+            , 'windspeedHigh' DECIMAL(3,1)
+            , 'windspeedLow' DECIMAL(3,1)
+            , 'windspeedAvg' DECIMAL(3,1)
+            , 'windgustHigh' DECIMAL(3,1)
+            , 'windgustLow' DECIMAL(3,1)
+            , 'windgustAvg' DECIMAL(3,1)
+            , 'dewptHigh' DECIMAL(3,1)
+            , 'dewptLow' DECIMAL(3,1)
+            , 'dewptAvg' DECIMAL(3,1)
+            , 'windchillHigh' DECIMAL(3,1)
+            , 'windchillLow' DECIMAL(3,1)
+            , 'windchillAvg' DECIMAL(3,1)
+            , 'heatindexHigh' DECIMAL(3,1)
+            , 'heatindexLow' DECIMAL(3,1)
+            , 'heatindexAvg' DECIMAL(3,1)
+            , 'pressureMax' DECIMAL(3,1)
+            , 'pressureMin' DECIMAL(3,1)
+            , 'pressureTrend' DECIMAL(3,1)
+            , 'precipRate' DECIMAL(3,1)
+            , 'precipTotal' DECIMAL(3,1)
+            
+            , UNIQUE (stationID, obsTimeLocal)
+        )
+        """
+
     )
 
     create_table_query.finish()
@@ -229,6 +422,8 @@ def fetch_history_records(location, from_date, to_date):
     cnn.close()
 
     return data_list
+
+
 
 
 def databaseConnection(database_name, action, table_name, list_data):
