@@ -32,22 +32,6 @@ def history_day(station_id, search_date = date.today().strftime("%Y%m%d")
 
 		station_dict = response.json()
 
-		# Expected list order
-		# key_list = ['dewptAvg', 'dewptHigh', 'dewptLow', 'heatindexAvg', 'heatindexHigh', 'heatindexLow'
-		# 			, 'precipRate', 'precipTotal', 'pressureMax', 'pressureMin', 'pressureTrend'
-		# 			, 'tempAvg', 'tempHigh', 'tempLow', 'windchillAvg', 'windchillHigh', 'windchillLow'
-		# 			, 'windgustAvg', 'windgustHigh', 'windgustLow'
-		# 			, 'windspeedAvg', 'windspeedHigh', 'windspeedLow']
-		#
-		# key_list_sorted = key_list.sort()
-		# selected_env = 'mydev2'
-		# server_list = [{'mydev': ['192.168.56.101', '192.168.56.102', '192.168.56.103']},
-		# 			   {'mydev2': ['192.168.56.104', '192.168.56.105', '192.168.56.106']}]
-		#
-		# server_dict = {k: v for d in server_list for k, v in d.items()}
-		# host_list = server_dict[selected_env]
-		#
-		# print(host_list)
 		# Get a list of Key fields
 		value_list = {}
 		# test_list = ['stationID','obsTimeLocal','imperial']
