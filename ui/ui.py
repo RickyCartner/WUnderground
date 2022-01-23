@@ -22,7 +22,9 @@ class UIDatePicker(QMainWindow):
         self.buttonSearch = self.findChild(QPushButton, "btnSearch")
         self.buttonCancel = self.findChild(QPushButton, "btnCancel")
         self.btnAdd = self.findChild(QPushButton, "btnAdd")
+        self.btnAddAll = self.findChild(QPushButton, "btnAddAll")
         self.btnRemove = self.findChild(QPushButton, "btnRemove")
+        self.btnRemoveAll = self.findChild(QPushButton, "btnRemoveAll")
 
         self.textDateCheck = self.findChild(QTextEdit, "textDateCheck")
         self.listWidgetLeft = self.findChild(QListWidget, "listStationMainList")
@@ -32,7 +34,11 @@ class UIDatePicker(QMainWindow):
         self.load_stations()
         # self.listStationMainList
         # self.listWidget = QListWidget()
+        # self.listWidget.item()
         # self.listWidget.takeItem(self.listWidget.currentItem())
+        # self.listWidget.selectAll()
+        # self.listWidget.count()
+        #
         # self.listWidget.sortItems(order='AscendingOrder')
 
         # Do something
@@ -46,7 +52,9 @@ class UIDatePicker(QMainWindow):
         self.dateTo.dateChanged.connect(self.date_changed)
         self.buttonSearch.clicked.connect(self.clicker)
         self.btnAdd.clicked.connect(self.add_station)
+        self.btnAddAll.clicked.connect(lambda x: self.add_station(True))
         self.btnRemove.clicked.connect(self.remove_station)
+        self.btnRemoveAll.clicked.connect(lambda x: self.remove_station(True))
 
         self.listWidgetLeft.itemChanged.connect(self.sort_list)
         self.listWidgetRight.itemChanged.connect(self.sort_list)
@@ -83,16 +91,32 @@ class UIDatePicker(QMainWindow):
         self.listWidgetLeft.sortItems()
         self.listWidgetRight.setSortingEnabled(True)
 
-    def add_station(self):
-        row = self.listWidgetLeft.currentRow()
-        row_item = self.listWidgetLeft.takeItem(row)
-        self.listWidgetRight.addItem(row_item)
+    def add_station(self, all_stations=False):
+        if not all_stations:
+            row = self.listWidgetLeft.currentRow()
+            row_item = self.listWidgetLeft.takeItem(row)
+            self.listWidgetRight.addItem(row_item)
+        else:
+            row_count = self.listWidgetLeft.count()
+            for i in range(row_count):
+                row_item = self.listWidgetLeft.takeItem(i)
+                # item_name = self.listWidgetLeft.item(i).text()
+                self.listWidgetRight.addItem(row_item)
+
+
         # station_list.sort(reverse=True)
 
-    def remove_station(self):
-        row = self.listWidgetRight.currentRow()
-        row_item = self.listWidgetRight.takeItem(row)
-        self.listWidgetLeft.addItem(row_item)
+    def remove_station(self, all_stations=False):
+        if not all_stations:
+            row = self.listWidgetRight.currentRow()
+            row_item = self.listWidgetRight.takeItem(row)
+            self.listWidgetLeft.addItem(row_item)
+        else:
+            row_count = self.listWidgetRight.count()
+            for i in range(row_count):
+                row_item = self.listWidgetRight.takeItem(i)
+                # item_name = self.listWidgetLeft.item(i).text()
+                self.listWidgetLeft.addItem(row_item)
 
 
 app = QApplication(sys.argv)
