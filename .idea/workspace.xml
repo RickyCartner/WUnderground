@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9597940c-8686-46bd-a60c-7d9f5d6143ba" name="Default Changelist" comment="Updating Final Project Files">
+      <change beforePath="$PROJECT_DIR$/.idea/Final Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Final Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/date_picker.ui" beforeDir="false" afterPath="$PROJECT_DIR$/ui/date_picker.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/ui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

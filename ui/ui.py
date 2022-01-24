@@ -99,7 +99,7 @@ class UIDatePicker(QMainWindow):
         else:
             row_count = self.listWidgetLeft.count()
             for i in range(row_count):
-                row_item = self.listWidgetLeft.takeItem(i)
+                row_item = self.listWidgetLeft.takeItem(0)
                 # item_name = self.listWidgetLeft.item(i).text()
                 self.listWidgetRight.addItem(row_item)
 
@@ -114,7 +114,7 @@ class UIDatePicker(QMainWindow):
         else:
             row_count = self.listWidgetRight.count()
             for i in range(row_count):
-                row_item = self.listWidgetRight.takeItem(i)
+                row_item = self.listWidgetRight.takeItem(0)
                 # item_name = self.listWidgetLeft.item(i).text()
                 self.listWidgetLeft.addItem(row_item)
 
