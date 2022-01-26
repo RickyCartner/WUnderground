@@ -29,11 +29,17 @@ def history_day(station_id, search_date = date.today().strftime("%Y%m%d")
 		api_url = 'https://api.weather.com/v2/pws/history/daily'
 
 		response = requests.get(api_url, params=querystring)
+		# print(response.json())
+		# print(type(response))
 
+		# convert results into dictionary
 		station_dict = response.json()
+		# station_dict = json.dumps(response.json())
+		# print(station_dict)
 
 		# Get a list of Key fields
 		value_list = {}
+		print(type(value_list))
 		# test_list = ['stationID','obsTimeLocal','imperial']
 		# res = None
 		# if all(sub in [station_dict['observations'], test_list]):

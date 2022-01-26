@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>formStationSearch</class>
+ <widget class="QWidget" name="formStationSearch">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Station Search</string>
   </property>
   <widget class="QLabel" name="labelFrom">
    <property name="geometry">
@@ -280,7 +280,7 @@ p, li { white-space: pre-wrap; }
   <connection>
    <sender>btnCancel</sender>
    <signal>clicked()</signal>
-   <receiver>Form</receiver>
+   <receiver>formStationSearch</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
