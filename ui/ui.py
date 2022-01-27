@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QListWidget\
 from PyQt5 import uic, Qt
 from PyQt5.QtCore import QDate, QDateTime
 from datetime import date
+from time import sleep
 
 
 class UIDatePicker(QMainWindow):
@@ -25,6 +26,7 @@ class UIDatePicker(QMainWindow):
         self.btnAddAll = self.findChild(QPushButton, "btnAddAll")
         self.btnRemove = self.findChild(QPushButton, "btnRemove")
         self.btnRemoveAll = self.findChild(QPushButton, "btnRemoveAll")
+        self.progressBar = self.findChild(QProgressBar, "progressBar")
 
         self.textDateCheck = self.findChild(QTextEdit, "textDateCheck")
         self.listWidgetLeft = self.findChild(QListWidget, "listStationMainList")
@@ -50,7 +52,7 @@ class UIDatePicker(QMainWindow):
 
         self.dateFrom.dateChanged.connect(self.date_changed)
         self.dateTo.dateChanged.connect(self.date_changed)
-        self.buttonSearch.clicked.connect(self.clicker)
+        self.buttonSearch.clicked.connect(self.search_clicked)
         self.btnAdd.clicked.connect(self.add_station)
         self.btnAddAll.clicked.connect(lambda x: self.add_station(True))
         self.btnRemove.clicked.connect(self.remove_station)
@@ -62,12 +64,24 @@ class UIDatePicker(QMainWindow):
         # Show the app
         self.show()
 
-    def clicker(self):
+    def search_clicked(self):
         f_date = self.dateFrom.dateTime()
         t_date = self.dateTo.dateTime()
 
         if f_date > t_date:
             self.textDateCheck.setPlainText(f'From Date cannot be prior to To Date')
+            return
+
+        self.progressBar.setValue(0)
+        self.progressBar.setVisible(True)
+
+        # TODO: Need to add another thread for this.
+        row_count = self.listWidgetRight.count()
+        for i in range(row_count):
+            # update progress bar
+            row_progress = int(i+1 / row_count) * 100
+            self.progressBar.setValue(50)
+            # sleep(1)
 
         # self.textDateCheck.setPlainText(f'{qDate.month()}/{qDate.day()}/{qDate.year()}')
         pass
