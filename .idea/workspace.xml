@@ -3,9 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="9597940c-8686-46bd-a60c-7d9f5d6143ba" name="Default Changelist" comment="Updating Final Project Files">
       <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/date_picker.ui" beforeDir="false" afterPath="$PROJECT_DIR$/ui/date_picker.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/ui.py" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/Final Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Final Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/weather.db" beforeDir="false" afterPath="$PROJECT_DIR$/database/weather.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/date_picker.ui" beforeDir="false" afterPath="$PROJECT_DIR$/ui/date_picker.ui" afterDir="false" />
+>>>>>>> 1190751520642666ae6eccc2d076475b3dbe2efa
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +57,7 @@
       <recent name="H:\Git\Repositories\WUnderground" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.ui">
+  <component name="RunManager" selected="Python.api">
     <configuration name="WUnderground_Precip_Daily_Info_v2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Final Project" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -156,8 +165,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ui" />
         <item itemvalue="Python.api" />
+        <item itemvalue="Python.ui" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.WeatherInfoCollection" />
         <item itemvalue="Python.WUnderground_Precip_Daily_Info_v2" />
@@ -204,7 +213,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/api.py</url>
-          <line>76</line>
+          <line>82</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
