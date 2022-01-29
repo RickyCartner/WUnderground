@@ -10,6 +10,24 @@
     <height>324</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>536</width>
+    <height>324</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>536</width>
+    <height>324</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -18,6 +36,9 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QTableWidget" name="tblAPI">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="horizontalScrollBarPolicy">
         <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
@@ -26,6 +47,9 @@
        </property>
        <property name="autoScroll">
         <bool>false</bool>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
        </property>
        <property name="alternatingRowColors">
         <bool>false</bool>
@@ -151,10 +175,22 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLineEdit" name="textEdit"/>
+        <widget class="QLineEdit" name="textEdit">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxActive">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Active</string>
          </property>
@@ -173,6 +209,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnDelete">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Delete Key</string>
          </property>
@@ -180,6 +219,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnUpdate">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Update Key</string>
          </property>
@@ -192,22 +234,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>tblAPI</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
-   <receiver>textEdit</receiver>
-   <slot>paste()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>267</x>
-     <y>69</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>238</x>
-     <y>271</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

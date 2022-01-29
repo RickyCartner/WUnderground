@@ -1,16 +1,5 @@
 """This module provides the layout and management of the main application"""
 
-from database import *
-import get_web_data
-import get_list_of_websites
-import export_to_excel
-from model import DailyModel, SummaryModel, MonthlyModel
-from PyQt5 import QtCore, QtSql, QtGui
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
-from PyQt5.QtGui import QImage, QIcon, QPixmap
-from datetime import datetime, date, timedelta
-
 
 # Allows multi-threading
 class Worker(QObject):
