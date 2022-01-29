@@ -99,16 +99,6 @@
        <attribute name="verticalHeaderStretchLastSection">
         <bool>false</bool>
        </attribute>
-       <row>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </row>
        <column>
         <property name="text">
          <string>API Key</string>
@@ -128,35 +118,6 @@
          <string>Active</string>
         </property>
        </column>
-       <item row="0" column="0">
-        <property name="text">
-         <string>e1f10a1e78da46f5b10a1e78da96f525</string>
-        </property>
-        <property name="background">
-         <brush brushstyle="NoBrush">
-          <color alpha="255">
-           <red>0</red>
-           <green>0</green>
-           <blue>0</blue>
-          </color>
-         </brush>
-        </property>
-       </item>
-       <item row="0" column="1">
-        <property name="text">
-         <string>No</string>
-        </property>
-       </item>
-       <item row="1" column="0">
-        <property name="text">
-         <string>c6a212d5b8d24b8ba212d5b8d21b8b56</string>
-        </property>
-       </item>
-       <item row="1" column="1">
-        <property name="text">
-         <string>Yes</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item>
@@ -173,23 +134,49 @@
       </spacer>
      </item>
      <item>
+      <widget class="QLabel" name="labelStatus">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(170, 0, 0);</string>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLineEdit" name="textEdit">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="font">
           <font>
            <pointsize>9</pointsize>
+           <bold>false</bold>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxActive">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="text">
           <string>Active</string>

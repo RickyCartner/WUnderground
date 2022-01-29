@@ -54,24 +54,64 @@ class DB(object):
 
         api_key = self.cursor.fetchone()
 
-        # self.cursor.execute("select * from SQLite_master")
-
-        # tables = self.cursor.fetchall()
-        #
-        # print("Listing tables and indices from main database:")
-        #
-        # for table in tables:
-        #     print("Type of database object: %s" % (table[0]))
-        #     print("Name of the database object: %s" % (table[1]))
-        #     print("Table Name: %s" % (table[2]))
-        #     print("Root page: %s" % (table[3]))
-        #     print("SQL statement: %s" % (table[4]))
-
-
-        # self.close()
-
         return api_key
 
+    def fetch_all_api_keys(self):
+
+        self.cursor.execute("SELECT * FROM tbl_api_key")
+
+        api_keys = self.cursor.fetchall()
+        api_keys_new = []
+
+        # convert tuple to list, replace 1 and 0 values with Yes/No, convert back to tuple
+        for api in api_keys:
+            api = list(api)
+            api = ['Yes' if i==1 else 'No' if i == 0 else i for i in api]
+            api = tuple(api)
+            api_keys_new.append(api)
+
+        return api_keys_new
+
+    def delete_api_key(self, api_key):
+
+        self.cursor.execute("SELECT api_key FROM tbl_api_key "
+                                      "WHERE api_notes = 'generic api key'")
+        result = self.cursor.fetchone()
+        generic = str(result[0])
+
+        if result[0] == api_key:
+            return 'Cannot delete the Public key, you can only update it'
+
+        self.cursor.execute("DELETE FROM tbl_api_key where api_key = ?", [api_key])
+        if self.cursor.rowcount > 0:
+            self.connection.commit()
+            status = 'success'
+
+        self.cursor.execute("UPDATE tbl_api_key SET primary_api_key = 1 "
+                            "WHERE api_notes = 'generic api key'")
+
+        return status
+
+    def add_api_key(self, api_key, active):
+
+        self.cursor.execute("INSERT INTO tbl_api_key (api_key, primary_api_key) "
+                            "VALUES (?, ?)", (api_key, active))
+
+        if self.cursor.rowcount > 0:
+            self.connection.commit()
+            status = 'success'
+        else:
+            status = 'fail insert'
+
+        # clear the key indicator only if the new api key should be primary
+        if active:
+            self.cursor.execute("UPDATE tbl_api_key SET primary_api_key = 0 "
+                                "WHERE primary_api_key = 1 "
+                                "AND api_key <> ?", [api_key])
+
+        self.connection.commit()
+
+        return status
 
     def execute(self, data):
         sql = '''
