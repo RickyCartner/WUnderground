@@ -6,6 +6,9 @@ from PyQt5.QtWidgets import QApplication
 from views import Window
 from database import databaseConnection
 
+from .database import createConnection
+from .views import Window
+
 
 # def resource_path(relative_path):
 #     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -46,6 +49,9 @@ def main():
     # Create the folder for the database if it does not exist
     if not os.path.exists("database/weather.db"):
         os.mkdir("database")
+
+    if not createConnection("weather.db"):
+        sys.exit(1)
 
     # Create the database and tables
     if not databaseConnection("database/weather.db", "create", "", ""):

@@ -3,14 +3,21 @@ from PyQt5.QtWidgets import QApplication, QVBoxLayout, QHBoxLayout\
     , QCheckBox, QLineEdit, QPushButton, QTableWidget, QLabel, QWidget, QHeaderView
 from PyQt5 import uic, QtCore
 import sys
+import os
 import database
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+from model import ApiModel
+# from WUnderground.model import ApiModel
+# from ..\model import ApiModel #, SummaryModel, MonthlyModel
 
 
 class ApiUi(QWidget):
     def __init__(self):
         super(ApiUi, self).__init__()
 
-        uic.loadUi("api_key.ui", self)
+        uic.loadUi("api_key_model.ui", self)
 
         # Define the widgets
         self.tblAPI = self.findChild(QTableWidget, "tblAPI")
@@ -25,30 +32,48 @@ class ApiUi(QWidget):
 
         # Functions
         # self.api_keys = DBReadAPI().get_keys()
-        self.tblAPI.doubleClicked.connect(self.populate_selection_value)
-        self.tblAPI.clicked.connect(self.activate_fields)
-
-        self.btnAdd.clicked.connect(self.add_api_key)
-        self.btnDelete.clicked.connect(self.delete_api_key)
+        # self.tblAPI.doubleClicked.connect(self.populate_selection_value)
+        # self.tblAPI.clicked.connect(self.activate_fields)
+        #
+        # self.btnAdd.clicked.connect(self.add_api_key)
+        # self.btnDelete.clicked.connect(self.delete_api_key)
 
         self.labelStatus.setVisible(False)
 
-        self.configure_table_widget()
+        # self.configure_table_widget()
+        # self.dailyModel = ApiModel('KSCBLUFF14', '2021-02-15')
+        self.dailyModel = ApiModel()
 
         self.show()
 
     def configure_table_widget(self):
         self.api_keys = DBReadAPI().get_keys()
-        self.tblAPI.setSortingEnabled(True)
-        self.tblAPI.sortItems(1, QtCore.Qt.DescendingOrder)
-        self.tblAPI.setColumnWidth(0, 400)
+
+        # Set column widths
+        self.tblAPI.setColumnWidth(0, 275)
+        self.tblAPI.setColumnWidth(1, 75)
+        self.tblAPI.setColumnWidth(1, 100)
+
         row = 0
         self.tblAPI.setRowCount(len(self.api_keys))
+
+        # Insert values and center middle column
         for api in self.api_keys:
             self.tblAPI.setItem(row, 0, QtWidgets.QTableWidgetItem(api[0]))
-            self.tblAPI.setItem(row, 1, QtWidgets.QTableWidgetItem(str(api[1])))
+            # item = QtWidgets.QTableWidgetItem(str(api[1]))
+            # item.setTextAlignment(QtCore.Qt.AlignHCenter)
+            # self.tblAPI.setItem(row, 1, item)
+
+
+            item = QtWidgets.QTableWidgetItem(str(api[1]))
+            item.setTextAlignment(QtCore.Qt.AlignHCenter)
+            self.tblAPI.setItem(row, 1, item)
+            self.tblAPI.setItem(row, 2, QtWidgets.QTableWidgetItem(api[2]))
             row += 1
 
+        # TODO: sortItems is messing up the last column
+        self.tblAPI.setSortingEnabled(True)
+        self.tblAPI.sortItems(1, QtCore.Qt.DescendingOrder)
 
     def populate_selection_value(self, index):
         self.textEdit.setText(self.tblAPI.item(index.row(), 0).text())
@@ -78,9 +103,10 @@ class ApiUi(QWidget):
         api_key = self.tblAPI.item(self.tblAPI.currentRow(), 0).text()
         status = DBReadAPI().delete_api(api_key)
         # if not status == 'success':
+        # self.api_keys.clear()
         self.configure_table_widget()
-        self.labelStatus.setVisible(True)
-        self.labelStatus.setText(status)
+        # self.labelStatus.setVisible(True)
+        # self.labelStatus.setText(status)
 
 
 class DBReadAPI:
