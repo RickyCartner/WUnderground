@@ -25,6 +25,15 @@ class ApiModel:
 
         return tableModel
 
+    def addAPI(self, data):
+        """Add a contact to the database."""
+        rows = self.model.rowCount()
+        self.model.insertRows(rows, 1)
+        for column, field in enumerate(data):
+            self.model.setData(self.model.index(rows, column), field)
+        self.model.submitAll()
+        self.model.select()
+
 
 class ContactsModel:
     def __init__(self):
