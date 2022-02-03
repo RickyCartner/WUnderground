@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WUnderground</class>
+ <widget class="QMainWindow" name="WUnderground">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>869</width>
+    <height>641</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>310</y>
+      <width>381</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="0,0,0,0" columnminimumwidth="60,0,0,0">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Precipitation</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="txtPrecipationRate"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="txtPrecipationTotal"/>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Rate</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>Total</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QTableView" name="tableView">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>380</y>
+      <width>821</width>
+      <height>141</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>350</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Monthly Data</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_WeatherStation">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>20</y>
+      <width>191</width>
+      <height>24</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="chartWidget" name="widgetChart" native="true">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>90</y>
+      <width>361</width>
+      <height>111</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="dateEdit">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>20</y>
+      <width>151</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="minimumDate">
+     <date>
+      <year>2015</year>
+      <month>1</month>
+      <day>1</day>
+     </date>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>70</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Current Quarter (chart)</string>
+    </property>
+   </widget>
+   <widget class="chartWidget" name="widgetChart_2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>230</y>
+      <width>361</width>
+      <height>111</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_17">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>210</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Previous Quarter (chart)</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>240</y>
+      <width>381</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_3" columnminimumwidth="60,0,0,0">
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_21">
+       <property name="text">
+        <string>Max</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>Tend</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_20">
+       <property name="text">
+        <string>Min</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="txtPressureTrend"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="txtPressureMax"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="txtPressureMin"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_19">
+       <property name="text">
+        <string>Pressure</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QDateEdit" name="dateEdit_2">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>50</y>
+      <width>151</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="minimumDate">
+     <date>
+      <year>2015</year>
+      <month>1</month>
+      <day>1</day>
+     </date>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>20</y>
+      <width>381</width>
+      <height>207</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout" columnminimumwidth="60,0,0,0">
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="txtTempLow"/>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_14">
+       <property name="text">
+        <string>Wind Chill</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Dew Point</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3">
+      <widget class="QLineEdit" name="txtWindSpeedAvg"/>
+     </item>
+     <item row="2" column="3">
+      <widget class="QLineEdit" name="txtDewPointAvg"/>
+     </item>
+     <item row="5" column="3">
+      <widget class="QLineEdit" name="txtWindGustAvg"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Temperature</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="txtWindChillHigh"/>
+     </item>
+     <item row="6" column="3">
+      <widget class="QLineEdit" name="txtWindChillAvg"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="txtDewPointHigh"/>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>High</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLineEdit" name="txtHeatIndexLow"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>Wind Gust</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Average</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="txtWindGustHigh"/>
+     </item>
+     <item row="5" column="2">
+      <widget class="QLineEdit" name="txtWindGustLow"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="txtTempHigh"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Wind Speed</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLineEdit" name="txtDewPointLow"/>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Low</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="txtHeatIndexHigh"/>
+     </item>
+     <item row="6" column="2">
+      <widget class="QLineEdit" name="txtWindChillLow"/>
+     </item>
+     <item row="3" column="3">
+      <widget class="QLineEdit" name="txtHeatIndexAvg"/>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="txtTempAvg"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="txtWindSpeedHigh"/>
+     </item>
+     <item row="4" column="2">
+      <widget class="QLineEdit" name="txtWindSpeedLow"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Heat Index</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>869</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionExport"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionAPI_Key"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAPI_Key">
+   <property name="text">
+    <string>API Key</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>chartWidget</class>
+   <extends>QWidget</extends>
+   <header>chartwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

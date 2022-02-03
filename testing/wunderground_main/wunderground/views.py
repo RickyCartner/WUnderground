@@ -149,7 +149,8 @@ class AddDialog(QDialog):
                 return
 
             self.data.append(field.text())
-            self.data.append(self.noteField)
+
+        self.data.append(self.noteField.text())
 
         if not self.data:
             return
