@@ -12,7 +12,7 @@ sys.path.append(parent)
 
 from PyQt5.QtWidgets import QApplication
 from .database import createConnection
-from .views import Window, ApiUi
+from .views_working import Window, ApiUi
 
 
 
@@ -26,12 +26,12 @@ def main():
         sys.exit(1)
 
     # Create the main window
-    # win = Window()
-    # win.show()
+    win = Window()
+    win.show()
 
-    # Create the api window
-    apiwin = ApiUi()
-    apiwin.show()
+    # Create the api token window
+    # apiwin = ApiUi()
+    # apiwin.show()
 
     # Run the event loop
     sys.exit(app.exec_())
