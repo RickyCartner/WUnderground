@@ -18,6 +18,10 @@ from PyQt5.QtWidgets import (
 )
 
 from .model import ApiModel
+from .database import populate_location_cbo
+from datetime import date
+# from .api import history_day
+import api
 
 
 class Window(QMainWindow):
@@ -36,29 +40,60 @@ class Window(QMainWindow):
         # self.centralWidget.setLayout(self.layout)
 
         # self.apiModel = ApiModel()
-        # self.setupUI()
+        self.setupUI()
+
 
     def setupUI(self):
         """Setup the main window's GUI."""
+        # Combobox
+        # from PyQt5.QtWidgets import QComboBox
+        # self.myCombo = QComboBox
+        # self.myCombo.itemText()
+        self.comboBox_WeatherStation.clear()
+        self.comboBox_WeatherStation.addItems(populate_location_cbo())
+
+        # from PyQt5.QtWidgets import QDateEdit
+        # self.mydate = QDateEdit
+        # self.mydate.setMaximumDate()
+        # self.mydate.date()
+
+        self.dateFrom.setMaximumDate(date.today())
+        self.dateTo.setMaximumDate(date.today())
+        self.dateFrom.setDate(date.today())
+        self.dateTo.setDate(date.today())
+
+        self.btnFetchData.clicked.connect(self.fetchData)
+
+    def fetchData(self):
+        fDate = self.dateFrom
+        fDate = fDate.strftime("%Y%m%d")
+        dto = date.strptime(self.dateFrom, '%Y%m%d').date()
+        search_date = dto.strftime("%Y%m%d")
+        print(fDate)
+        weather_station = self.comboBox_WeatherStation.itemText()
+        print(weather_station)
+        # api.history_day(weather_station, fDate)
+
+
         # Create the table view widget
-        self.table = QTableView()
-        self.table.setModel(self.apiModel.model)
-        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table.resizeColumnsToContents()
-
-        # Create buttons
-        self.addButton = QPushButton("Add...")
-        self.deleteButton = QPushButton("Delete")
-        self.clearAllButton = QPushButton("Clear All")
-
-        # Lay out the GUI
-        layout = QVBoxLayout()
-        layout.addWidget(self.addButton)
-        layout.addWidget(self.deleteButton)
-        layout.addStretch()
-        layout.addWidget(self.clearAllButton)
-        self.layout.addWidget(self.table)
-        self.layout.addLayout(layout)
+        # self.table = QTableView()
+        # self.table.setModel(self.apiModel.model)
+        # self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        # self.table.resizeColumnsToContents()
+        #
+        # # Create buttons
+        # self.addButton = QPushButton("Add...")
+        # self.deleteButton = QPushButton("Delete")
+        # self.clearAllButton = QPushButton("Clear All")
+        #
+        # # Lay out the GUI
+        # layout = QVBoxLayout()
+        # layout.addWidget(self.addButton)
+        # layout.addWidget(self.deleteButton)
+        # layout.addStretch()
+        # layout.addWidget(self.clearAllButton)
+        # self.layout.addWidget(self.table)
+        # self.layout.addLayout(layout)
 
 
 class ApiUi(QWidget):

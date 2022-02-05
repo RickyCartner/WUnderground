@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1040</width>
-    <height>809</height>
+    <width>1051</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -187,7 +187,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>500</height>
+           <height>200</height>
           </size>
          </property>
          <property name="frameShape">
@@ -254,7 +254,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>400</height>
+              <height>300</height>
              </size>
             </property>
             <property name="frameShape">
@@ -278,10 +278,16 @@
              </property>
              <item>
               <widget class="QFrame" name="frame_10">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
                  <width>350</width>
-                 <height>0</height>
+                 <height>200</height>
                 </size>
                </property>
                <property name="maximumSize">
@@ -298,24 +304,33 @@
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
                 <property name="spacing">
-                 <number>17</number>
+                 <number>7</number>
                 </property>
                 <property name="leftMargin">
                  <number>11</number>
                 </property>
                 <property name="topMargin">
-                 <number>11</number>
+                 <number>7</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>35</number>
+                 <number>1</number>
                 </property>
                 <item>
-                 <layout class="QGridLayout" name="gridLayoutMain" columnminimumwidth="10,0,0,0">
+                 <layout class="QGridLayout" name="gridLayoutMain" rowminimumheight="0,0,0,0,0,0,0" columnminimumwidth="10,0,0,0">
+                  <property name="horizontalSpacing">
+                   <number>11</number>
+                  </property>
                   <property name="verticalSpacing">
-                   <number>7</number>
+                   <number>4</number>
                   </property>
                   <item row="1" column="2">
                    <widget class="QLineEdit" name="txtTempLow">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -329,6 +344,12 @@
                   </item>
                   <item row="6" column="0">
                    <widget class="QLabel" name="label_14">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
@@ -347,6 +368,12 @@
                   </item>
                   <item row="2" column="0">
                    <widget class="QLabel" name="label_5">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
@@ -365,6 +392,12 @@
                   </item>
                   <item row="4" column="3">
                    <widget class="QLineEdit" name="txtWindSpeedAvg">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -378,6 +411,12 @@
                   </item>
                   <item row="2" column="3">
                    <widget class="QLineEdit" name="txtDewPointAvg">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -391,6 +430,12 @@
                   </item>
                   <item row="5" column="3">
                    <widget class="QLineEdit" name="txtWindGustAvg">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -404,6 +449,12 @@
                   </item>
                   <item row="1" column="0">
                    <widget class="QLabel" name="label_4">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
@@ -422,6 +473,12 @@
                   </item>
                   <item row="6" column="1">
                    <widget class="QLineEdit" name="txtWindChillHigh">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -435,6 +492,12 @@
                   </item>
                   <item row="6" column="3">
                    <widget class="QLineEdit" name="txtWindChillAvg">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -448,6 +511,12 @@
                   </item>
                   <item row="2" column="1">
                    <widget class="QLineEdit" name="txtDewPointHigh">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -479,6 +548,12 @@
                   </item>
                   <item row="3" column="2">
                    <widget class="QLineEdit" name="txtHeatIndexLow">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -492,6 +567,12 @@
                   </item>
                   <item row="5" column="0">
                    <widget class="QLabel" name="label_13">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
@@ -528,6 +609,12 @@
                   </item>
                   <item row="5" column="1">
                    <widget class="QLineEdit" name="txtWindGustHigh">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -541,19 +628,12 @@
                   </item>
                   <item row="5" column="2">
                    <widget class="QLineEdit" name="txtWindGustLow">
-                    <property name="maximumSize">
-                     <size>
-                      <width>60</width>
-                      <height>60</height>
-                     </size>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QLineEdit" name="txtTempHigh">
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -567,6 +647,12 @@
                   </item>
                   <item row="4" column="0">
                    <widget class="QLabel" name="label_12">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
@@ -585,6 +671,12 @@
                   </item>
                   <item row="2" column="2">
                    <widget class="QLineEdit" name="txtDewPointLow">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -616,6 +708,12 @@
                   </item>
                   <item row="3" column="1">
                    <widget class="QLineEdit" name="txtHeatIndexHigh">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -629,6 +727,12 @@
                   </item>
                   <item row="6" column="2">
                    <widget class="QLineEdit" name="txtWindChillLow">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -642,6 +746,12 @@
                   </item>
                   <item row="3" column="3">
                    <widget class="QLineEdit" name="txtHeatIndexAvg">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -655,6 +765,12 @@
                   </item>
                   <item row="1" column="3">
                    <widget class="QLineEdit" name="txtTempAvg">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -668,6 +784,12 @@
                   </item>
                   <item row="4" column="1">
                    <widget class="QLineEdit" name="txtWindSpeedHigh">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -681,6 +803,12 @@
                   </item>
                   <item row="4" column="2">
                    <widget class="QLineEdit" name="txtWindSpeedLow">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -694,6 +822,12 @@
                   </item>
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_6">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>100</width>
@@ -710,29 +844,42 @@
                     </property>
                    </widget>
                   </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QGridLayout" name="gridLayout_Pressure">
-                  <property name="verticalSpacing">
-                   <number>7</number>
-                  </property>
-                  <item row="0" column="2">
-                   <widget class="QLabel" name="label_21">
-                    <property name="font">
-                     <font>
-                      <pointsize>9</pointsize>
-                     </font>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="txtTempHigh">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <property name="text">
-                     <string>Max</string>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>60</height>
+                     </size>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
                     </property>
                    </widget>
                   </item>
-                  <item row="0" column="3">
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QGridLayout" name="gridLayout_Pressure" columnminimumwidth="10,0,0,0,0">
+                  <property name="horizontalSpacing">
+                   <number>11</number>
+                  </property>
+                  <property name="verticalSpacing">
+                   <number>4</number>
+                  </property>
+                  <item row="0" column="4">
                    <widget class="QLabel" name="label_18">
                     <property name="font">
                      <font>
@@ -761,7 +908,7 @@
                    </widget>
                   </item>
                   <item row="1" column="3">
-                   <widget class="QLineEdit" name="txtPressureTrend">
+                   <widget class="QLineEdit" name="txtPressureMax">
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -773,8 +920,23 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="1" column="2">
-                   <widget class="QLineEdit" name="txtPressureMax">
+                  <item row="0" column="3">
+                   <widget class="QLabel" name="label_21">
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Max</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="4">
+                   <widget class="QLineEdit" name="txtPressureTrend">
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -823,6 +985,51 @@
                 </item>
                 <item>
                  <layout class="QGridLayout" name="gridLayout_Precip" rowstretch="0,0" columnstretch="0,0,0,0" columnminimumwidth="10,0,0,0">
+                  <property name="horizontalSpacing">
+                   <number>11</number>
+                  </property>
+                  <property name="verticalSpacing">
+                   <number>4</number>
+                  </property>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="label_9">
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Rate</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_7">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>100</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Precipitation</string>
+                    </property>
+                   </widget>
+                  </item>
                   <item row="1" column="2">
                    <widget class="QLineEdit" name="txtPrecipationTotal">
                     <property name="maximumSize">
@@ -851,34 +1058,6 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="label_9">
-                    <property name="font">
-                     <font>
-                      <pointsize>9</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Rate</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QLineEdit" name="txtPrecipationRate">
-                    <property name="maximumSize">
-                     <size>
-                      <width>60</width>
-                      <height>60</height>
-                     </size>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="0" column="3">
                    <spacer name="horizontalSpacer">
                     <property name="orientation">
@@ -892,27 +1071,16 @@
                     </property>
                    </spacer>
                   </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_7">
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>0</height>
-                     </size>
-                    </property>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="txtPrecipationRate">
                     <property name="maximumSize">
                      <size>
-                      <width>100</width>
-                      <height>16777215</height>
+                      <width>60</width>
+                      <height>60</height>
                      </size>
                     </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>9</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Precipitation</string>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
                     </property>
                    </widget>
                   </item>
@@ -991,19 +1159,37 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelMonthlyData">
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
+           <widget class="QFrame" name="frame_4">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
             </property>
-            <property name="text">
-             <string>Monthly Data</string>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
             </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QLabel" name="labelMonthlyData">
+               <property name="font">
+                <font>
+                 <pointsize>9</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Monthly Data</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableView" name="tableViewMonthly"/>
+             </item>
+            </layout>
            </widget>
-          </item>
-          <item>
-           <widget class="QTableView" name="tableViewMonthly"/>
           </item>
          </layout>
         </widget>
@@ -1018,8 +1204,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1040</width>
-     <height>20</height>
+     <width>1051</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

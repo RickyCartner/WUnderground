@@ -5,6 +5,7 @@
 
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
+import sqlite3
 
 
 def _createApiTable():
@@ -38,3 +39,18 @@ def createConnection(databaseName):
     _createApiTable()
 
     return True
+
+
+def populate_location_cbo():
+    cnn = sqlite3.connect("database/weather.db")
+    c = cnn.cursor()
+
+    c.execute("SELECT location FROM tbl_location WHERE active = 1 ORDER BY location")
+    # rows = c.fetchall()
+    list_of_strings = [item[0] for item in c.fetchall()]
+
+    cnn.commit()
+    cnn.close()
+
+    return list_of_strings
+
