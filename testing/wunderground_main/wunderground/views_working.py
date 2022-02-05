@@ -26,7 +26,7 @@ class Window(QMainWindow):
         """Initializer."""
         super().__init__(parent)
 
-        uic.loadUi("ui\\main_form.ui", self)
+        uic.loadUi("ui\\main\\form.ui", self)
 
         # self.setWindowTitle("RP Contacts")
         # self.resize(550, 250)
