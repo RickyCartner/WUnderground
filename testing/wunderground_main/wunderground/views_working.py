@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 
-from .model import ApiModel
+from .model import ApiModel, MonthlyModel
 from .database import populate_location_cbo
 from datetime import date
 # from .api import history_day
@@ -39,7 +39,6 @@ class Window(QMainWindow):
         # self.layout = QHBoxLayout()
         # self.centralWidget.setLayout(self.layout)
 
-        # self.apiModel = ApiModel()
         self.setupUI()
 
 
@@ -48,7 +47,7 @@ class Window(QMainWindow):
         # Combobox
         # from PyQt5.QtWidgets import QComboBox
         # self.myCombo = QComboBox
-        # self.myCombo.itemText()
+        # self.myCombo.currentText()
         self.comboBox_WeatherStation.clear()
         self.comboBox_WeatherStation.addItems(populate_location_cbo())
 
@@ -65,14 +64,20 @@ class Window(QMainWindow):
         self.btnFetchData.clicked.connect(self.fetchData)
 
     def fetchData(self):
-        fDate = self.dateFrom
-        fDate = fDate.strftime("%Y%m%d")
-        dto = date.strptime(self.dateFrom, '%Y%m%d').date()
-        search_date = dto.strftime("%Y%m%d")
-        print(fDate)
-        weather_station = self.comboBox_WeatherStation.itemText()
-        print(weather_station)
+        begin_Date = self.dateFrom.date()
+        begin_Date = begin_Date.toString('yyyyMMdd')
+        end_Date = self.dateTo.date()
+        end_Date = end_Date.toString('yyyyMMdd')
+
+        weather_station = self.comboBox_WeatherStation.currentText()
+
         # api.history_day(weather_station, fDate)
+
+        self.monthlyModel = MonthlyModel(weather_station, begin_Date, end_Date)
+        # Create the table view widget
+        self.tableViewMonthly.setModel(self.monthlyModel.model)
+        self.tableViewMonthly.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tableViewMonthly.resizeColumnsToContents()
 
 
         # Create the table view widget
