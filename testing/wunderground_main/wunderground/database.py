@@ -22,10 +22,11 @@ def _createApiTable():
     )
 
 
-def createConnection(databaseName):
+# def create_connection(database_name: str, action: str):
+def create_connection(action: str):
     """Create and open a database connection."""
     connection = QSqlDatabase.addDatabase("QSQLITE")
-    connection.setDatabaseName(databaseName)
+    connection.setDatabaseName('database\\weather.db')
 
     if not connection.open():
         QMessageBox.warning(
@@ -35,8 +36,17 @@ def createConnection(databaseName):
         )
         return False
 
-    # Attempt to create the API table
-    _createApiTable()
+    try:
+        if action == 'createAPI':
+            # Attempt to create the API table
+            _createApiTable()
+        elif action == 'closeDB':
+            # Clean up the database connections
+            connection.close()
+            QSqlDatabase.removeDatabase(QSqlDatabase.database().connectionName())
+
+    except Exception as e:
+        return e
 
     return True
 

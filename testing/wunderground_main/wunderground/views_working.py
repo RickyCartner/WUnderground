@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This module provides views to manage the contacts table."""
+"""This module provides views to manage the main window."""
 
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import Qt
@@ -25,9 +25,10 @@ import api
 
 
 class Window(QMainWindow):
-    """Main Window."""
+    """ Main Window """
+
     def __init__(self, parent=None):
-        """Initializer."""
+        """ Initializer """
         super().__init__(parent)
 
         uic.loadUi("ui\\main\\form.ui", self)
@@ -39,43 +40,48 @@ class Window(QMainWindow):
         # self.layout = QHBoxLayout()
         # self.centralWidget.setLayout(self.layout)
 
-        self.setupUI()
+        self.setup_ui()
 
-
-    def setupUI(self):
-        """Setup the main window's GUI."""
+    """Setup the main window's GUI."""
+    def setup_ui(self):
         # Combobox
         # from PyQt5.QtWidgets import QComboBox
         # self.myCombo = QComboBox
         # self.myCombo.currentText()
+
+        # Clear the combobox and add the list of locations from the database
         self.comboBox_WeatherStation.clear()
         self.comboBox_WeatherStation.addItems(populate_location_cbo())
 
-        # from PyQt5.QtWidgets import QDateEdit
-        # self.mydate = QDateEdit
-        # self.mydate.setMaximumDate()
-        # self.mydate.date()
-
+        # Set the max date and From and To dates to todays date
         self.dateFrom.setMaximumDate(date.today())
         self.dateTo.setMaximumDate(date.today())
         self.dateFrom.setDate(date.today())
         self.dateTo.setDate(date.today())
 
-        self.btnFetchData.clicked.connect(self.fetchData)
+        # Set the "Fetch" button click event
+        self.btnFetchData.clicked.connect(self.fetch_data)
 
-    def fetchData(self):
-        begin_Date = self.dateFrom.date()
-        begin_Date = begin_Date.toString('yyyyMMdd')
-        end_Date = self.dateTo.date()
-        end_Date = end_Date.toString('yyyyMMdd')
+    '''
+    Get the weather date for the weather station and date range
+    and display it on the main form
+    '''
+    def fetch_data(self):
+        # Get the From and To dates and convert them to a format the API can read
+        begin_date = self.dateFrom.date()
+        begin_date = begin_date.toString('yyyyMMdd')
+        end_date = self.dateTo.date()
+        end_date = end_date.toString('yyyyMMdd')
 
+        # Get the weather station to search
         weather_station = self.comboBox_WeatherStation.currentText()
 
         # api.history_day(weather_station, fDate)
 
-        self.monthlyModel = MonthlyModel(weather_station, begin_Date, end_Date)
+        # Call the model to populate the table module
+        self.monthly_model = MonthlyModel(weather_station, begin_date, end_date)
         # Create the table view widget
-        self.tableViewMonthly.setModel(self.monthlyModel.model)
+        self.tableViewMonthly.setModel(self.monthly_model.model)
         self.tableViewMonthly.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableViewMonthly.resizeColumnsToContents()
 

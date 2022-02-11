@@ -5,6 +5,7 @@
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlTableModel, QSqlQuery
+from .database import create_connection
 
 
 class MonthlyModel:
@@ -12,30 +13,41 @@ class MonthlyModel:
         self.station_id = station_id
         self.begin_date = begin_date
         self.end_date = end_date
-        self.model = self.createModel()
+
+        # Create a connection to the database
+        create_connection("createConnection")
+
+        # Call the method to display weather data in the table model
+        self.model = self.create_model()
+
+        # Close the connection to the database
+        create_connection("closeDB")
 
     # @staticmethod
-    def createModel(self):
+    def create_model(self):
         """Create and set up the model."""
-        # tableModel = QSqlTableModel()
-        # tableModel.setTable("tbl_weather_data")
-        # tableModel.setEditStrategy(QSqlTableModel.OnFieldChange)
-        # tableModel.select()
+        # table_model = QSqlTableModel()
+        # table_model.setTable("tbl_weather_data")
+        # table_model.setEditStrategy(QSqlTableModel.OnFieldChange)
+        # table_model.select()
         # headers = ("api_key", "primary_api_key", "api_notes")
-        tableModel = QSqlTableModel()
-        # tableModel.setTable("tbl_history")
+        table_model = QSqlTableModel()
+        # table_model.setTable("tbl_history")
 
-        tableQuery = QSqlQuery("database\\weather.db")
-        tableQuery.prepare("""SELECT * FROM tbl_weather_data 
+        table_query = QSqlQuery("weather.db")
+        print(table_query.isActive())
+
+        table_query.prepare("""SELECT * FROM tbl_weather_data 
                             WHERE stationID = :stationID
                             AND obsTimeLocal BETWEEN :begin_date AND :end_date""")
-        tableQuery.bindValue(":stationID", self.station_id)
-        tableQuery.bindValue(":begin_date", self.begin_date)
-        tableQuery.bindValue(":end_date", self.end_date)
-        tableQuery.exec()
+        table_query.bindValue(":stationID", self.station_id)
+        table_query.bindValue(":begin_date", self.begin_date)
+        table_query.bindValue(":end_date", self.end_date)
+        table_query.exec()
+        print(table_query.first())
 
-        tableModel.setQuery(tableQuery)
-        tableModel.select()
+        table_model.setQuery(table_query)
+        table_model.select()
         headers = ("Station ID", "Record Date", "Temp High", "Temp Low", "Temp Avg"
                    , "Dew Point High", "Dew Point Low", "Dew Point Avg"
                    , "Heat Index High", "Heat Index Low", "Heat Index Avg"
@@ -46,9 +58,9 @@ class MonthlyModel:
                    , "Precipitation Rate", "Precipitation Total")
 
         for columnIndex, header in enumerate(headers):
-            tableModel.setHeaderData(columnIndex, Qt.Horizontal, header)
+            table_model.setHeaderData(columnIndex, Qt.Horizontal, header)
 
-        return tableModel
+        return table_model
 
 
 

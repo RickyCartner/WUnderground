@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# rpcontacts/main.py
+# wunderground/main.py
 
 """This module provides RP Contacts application."""
 
@@ -11,19 +11,25 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 from PyQt5.QtWidgets import QApplication
-from .database import createConnection
+from .database import create_connection
 from .views_working import Window, ApiUi
 
 
-
 def main():
-    """RP Contacts main function."""
+    """ WUnderground main function."""
     # Create the application
     app = QApplication(sys.argv)
 
     # Connect to the database before creating any window
-    if not createConnection("database\\weather.db"):
+    # if not create_connection("database\\weather.db", "createConnection"):
+    if not create_connection("createConnection"):
         sys.exit(1)
+
+    '''
+    TODO: Need to create a module that will attempt to create the database
+        tables if they do not currently exist. I.E. The database was accidentally
+        deleted.
+    '''
 
     # Create the main window
     win = Window()
@@ -35,3 +41,7 @@ def main():
 
     # Run the event loop
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()

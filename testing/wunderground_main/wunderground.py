@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# rpcontacts_project/rpcontacts.py
+# wunderground_project/wunderground.py
 
-"""This module provides RP Contacts entry point script."""
+"""This module provides WUnderground entry point script."""
 
 from testing.wunderground_main.wunderground.main import main
 
