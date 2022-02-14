@@ -52,7 +52,7 @@ def create_connection(action: str):
 
 
 def populate_location_cbo():
-    cnn = sqlite3.connect("database/weather.db")
+    cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
     c.execute("SELECT location FROM tbl_location WHERE active = 1 ORDER BY location")
@@ -63,4 +63,23 @@ def populate_location_cbo():
     cnn.close()
 
     return list_of_strings
+
+
+# class DBConnection:
+#     def __init__(self):
+#         self.cnn = sqlite3.connect("database\\weather.db")
+#         self.c = self.cnn.cursor()
+#
+#     def check_table_for_existing_data(self, station_id, weather_date):
+#         self.c.execute(f"""SELECT 1 FROM tbl_weather_data WHERE stationID = {station_id}
+#                   AND obsTimeLocal = {weather_date}""")
+#         rows = self.c.fetchone()
+#         if rows > 0:
+#             return True
+#
+#         return False
+#
+#     def close_connection(self):
+#         self.cnn.commit()
+#         self.cnn.close()
 

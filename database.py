@@ -113,6 +113,19 @@ class DB(object):
 
         return status
 
+    def check_table_for_existing_data(self, station_id, weather_date):
+        try:
+            self.cursor.execute(f"""SELECT 1 FROM tbl_weather_data WHERE stationID = {station_id} 
+                      AND obsTimeLocal = {weather_date}""")
+            rows = self.cursor.fetchone()
+            if rows > 0:
+                return True
+
+        except Exception as e:
+            return False
+
+        return False
+
     def execute(self, data):
         sql = '''
                 INSERT OR IGNORE INTO tbl_weather_data ('stationID', 'obsTimeLocal'

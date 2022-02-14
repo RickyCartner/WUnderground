@@ -20,8 +20,8 @@ from PyQt5.QtWidgets import (
 from .model import ApiModel, MonthlyModel
 from .database import populate_location_cbo
 from datetime import date
-# from .api import history_day
-import api
+from .api import history_day
+# import .api
 
 
 class Window(QMainWindow):
@@ -76,10 +76,12 @@ class Window(QMainWindow):
         # Get the weather station to search
         weather_station = self.comboBox_WeatherStation.currentText()
 
-        # api.history_day(weather_station, fDate)
+        # Use api.py, history_day function
+        history_day(weather_station, begin_date, end_date)
 
         # Call the model to populate the table module
         self.monthly_model = MonthlyModel(weather_station, begin_date, end_date)
+
         # Create the table view widget
         self.tableViewMonthly.setModel(self.monthly_model.model)
         self.tableViewMonthly.setSelectionBehavior(QAbstractItemView.SelectRows)

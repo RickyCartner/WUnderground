@@ -9,11 +9,10 @@ import database
 import sqlite3
 from PyQt5 import uic
 
-#API_KEY = "e1f10a1e78da46f5b10a1e78da96f525"  # Found on website
-# API_KEY = "c6a212d5b8d24b8ba212d5b8d21b8b56"  # Assigned
-
 weather_list = []
 '''Return data for a specific day'''
+
+
 def history_day(station_id, search_date = date.today().strftime("%Y%m%d")
 				, end_date=date.today().strftime("%Y%m%d"), number_type="decimal"):
 
@@ -23,62 +22,62 @@ def history_day(station_id, search_date = date.today().strftime("%Y%m%d")
 
 	while search_date <= end_date:
 
-		querystring = {"stationId": station_id, "format": "json", "units": "e", "date": search_date,
-						"apiKey": api_key, "numericPrecision": number_type}
+		# db = database.DBConnection()
+		if not db.check_table_for_existing_data(station_id, search_date):
 
-		api_url = 'https://api.weather.com/v2/pws/history/daily'
+			querystring = {"stationId": station_id, "format": "json", "units": "e", "date": search_date,
+							"apiKey": api_key, "numericPrecision": number_type}
 
-		response = requests.get(api_url, params=querystring)
-		# print(response.json())
-		# print(type(response))
+			api_url = 'https://api.weather.com/v2/pws/history/daily'
 
-		# convert results into dictionary
-		station_dict = response.json()
-		# station_dict = json.dumps(response.json())
-		# print(station_dict)
+			response = requests.get(api_url, params=querystring)
+			# print(response.json())
+			# print(type(response))
 
-		# Get a list of Key fields
-		value_list = {}
-		print(type(value_list))
-		# test_list = ['stationID','obsTimeLocal','imperial']
-		# res = None
-		# if all(sub in [station_dict['observations'], test_list]):
-		# 	res = station_dict['observations'][sub]
+			# convert results into dictionary
+			station_dict = response.json()
+			# station_dict = json.dumps(response.json())
+			# print(station_dict)
 
-		# for k, v in station_dict['observations'] if k:
-		# 	value_list[k] = v
+			# Get a list of Key fields
+			value_list = {}
+			print(type(value_list))
+			# test_list = ['stationID','obsTimeLocal','imperial']
+			# res = None
+			# if all(sub in [station_dict['observations'], test_list]):
+			# 	res = station_dict['observations'][sub]
 
-		for p in station_dict['observations']:
-			value_list['stationID'] = p['stationID']
-			value_list['obsTimeLocal'] = p['obsTimeLocal']
-			value_list.update(p['imperial'])
-			# station_id = p['stationID']
-			# weather_date = p['obsTimeLocal']
-			# value_list = p['imperial']
+			# for k, v in station_dict['observations'] if k:
+			# 	value_list[k] = v
 
-		# print(value_list)
-		# res = {k:v for p in station_dict['observations'] for k, v in p['imperial'].items()}
-		# print(res)
-		# value_list.update('stationID': station_id)
+			for p in station_dict['observations']:
+				value_list['stationID'] = p['stationID']
+				value_list['obsTimeLocal'] = p['obsTimeLocal']
+				value_list.update(p['imperial'])
+				# station_id = p['stationID']
+				# weather_date = p['obsTimeLocal']
+				# value_list = p['imperial']
 
-		# station_id = station_dict['observations']['stationID']
-		# weather_date = station_dict['observations']['obsTimeLocal']
+			# print(value_list)
+			# res = {k:v for p in station_dict['observations'] for k, v in p['imperial'].items()}
+			# print(res)
+			# value_list.update('stationID': station_id)
 
-		# key_list.insert(0, station_info['stationID'])
-		# value_list.update(station_dict['observations']['stationID'])
-		# value_list.update(station_dict['observations']['obsTimeLocal'])
-		# value_list.insert(0, station_id)
-		# value_list.insert(1, weather_date)
+			# station_id = station_dict['observations']['stationID']
+			# weather_date = station_dict['observations']['obsTimeLocal']
 
-		weather_list.append(value_list)
-		print(weather_list)
+			# key_list.insert(0, station_info['stationID'])
+			# value_list.update(station_dict['observations']['stationID'])
+			# value_list.update(station_dict['observations']['obsTimeLocal'])
+			# value_list.insert(0, station_id)
+			# value_list.insert(1, weather_date)
+
+			weather_list.append(value_list)
+			# print(weather_list)
 
 		# print(search_date)
 		dto = datetime.strptime(search_date, '%Y%m%d').date()
 		search_date = (dto + timedelta(days=1)).strftime("%Y%m%d")
-
-		# print("AFTER 5 DAYS DATE WILL BE : ", search_date)
-		# print(date_next)
 
 	db.execute(weather_list)
 
