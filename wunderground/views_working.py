@@ -7,7 +7,8 @@ from PyQt5.QtCore import Qt
 
 from PyQt5.QtWidgets import (
     QAbstractItemView,
-    QHBoxLayout, QVBoxLayout,
+    QMainWindow,
+    QVBoxLayout,
     QMainWindow, QWidget,
     QTableView,
     QPushButton, QCheckBox, QLineEdit, QLabel,
@@ -21,6 +22,7 @@ from .model import ApiModel, MonthlyModel
 from .database import populate_location_cbo
 from datetime import date
 from .api import history_day
+from ui.main_form import Ui_WUnderground
 # import .api
 
 
@@ -30,8 +32,12 @@ class Window(QMainWindow):
     def __init__(self, parent=None):
         """ Initializer """
         super().__init__(parent)
+        # self.window = QMainWindow()
+        self.main_ui = Ui_WUnderground()
+        self.main_ui.setupUi(self.window)
+        self.window.show()
 
-        uic.loadUi("ui\\main\\form.ui", self)
+        # uic.loadUi("ui\\main\\form.ui", self)
 
         self.setup_ui()
 
@@ -39,17 +45,17 @@ class Window(QMainWindow):
     def setup_ui(self):
 
         # Clear the combobox and add the list of locations from the database
-        self.comboBox_WeatherStation.clear()
-        self.comboBox_WeatherStation.addItems(populate_location_cbo())
+        self.main_ui.comboBox_WeatherStation.clear()
+        self.main_ui.comboBox_WeatherStation.addItems(populate_location_cbo())
 
         # Set the max date and From and To dates to todays date
-        self.dateFrom.setMaximumDate(date.today())
-        self.dateTo.setMaximumDate(date.today())
-        self.dateFrom.setDate(date.today())
-        self.dateTo.setDate(date.today())
+        self.main_ui.dateFrom.setMaximumDate(date.today())
+        self.main_ui.dateTo.setMaximumDate(date.today())
+        self.main_ui.dateFrom.setDate(date.today())
+        self.main_ui.dateTo.setDate(date.today())
 
         # Set the "Fetch" button click event
-        self.btnFetchData.clicked.connect(self.fetch_data)
+        self.main_ui.btnFetchData.clicked.connect(self.fetch_data)
 
     '''
     Get the weather date for the weather station and date range
@@ -57,13 +63,13 @@ class Window(QMainWindow):
     '''
     def fetch_data(self):
         # Get the From and To dates and convert them to a format the API can read
-        begin_date = self.dateFrom.date()
+        begin_date = self.main_ui.dateFrom.date()
         begin_date = begin_date.toString('yyyyMMdd')
-        end_date = self.dateTo.date()
+        end_date = self.main_ui.dateTo.date()
         end_date = end_date.toString('yyyyMMdd')
 
         # Get the weather station to search
-        weather_station = self.comboBox_WeatherStation.currentText()
+        weather_station = self.main_ui.comboBox_WeatherStation.currentText()
 
         # Use api.py, history_day function
         history_day(weather_station, begin_date, end_date)
@@ -72,9 +78,9 @@ class Window(QMainWindow):
         self.monthly_model = MonthlyModel(weather_station, begin_date, end_date)
 
         # Create the table view widget
-        self.tableViewMonthly.setModel(self.monthly_model.model)
-        self.tableViewMonthly.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.tableViewMonthly.resizeColumnsToContents()
+        self.main_ui.tableViewMonthly.setModel(self.monthly_model.model)
+        self.main_ui.tableViewMonthly.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.main_ui.tableViewMonthly.resizeColumnsToContents()
 
 
         # Create the table view widget
