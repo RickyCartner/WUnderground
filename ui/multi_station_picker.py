@@ -1,5 +1,5 @@
 import sys
-from datetime import date
+from datetime import date, timedelta
 from time import sleep
 
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QListWidget\
@@ -19,6 +19,9 @@ class UIStationPicker(QMainWindow):
         # Load the ui file
         uic.loadUi("ui\\multi_station_picker.ui", self)
 
+        self.setup_ui()
+
+    def setup_ui(self):
         # Define our Widgets
         self.labelFrom = self.findChild(QLabel, "labelFrom")
         self.labelTo = self.findChild(QLabel, "labelTo")
@@ -48,10 +51,15 @@ class UIStationPicker(QMainWindow):
         # self.listWidget.sortItems(order='AscendingOrder')
 
         # set the date pickers to the current date and prevent future date availability
-        self.dateFrom.setDateTime(QDateTime.currentDateTime())
-        self.dateFrom.setMaximumDateTime(QDateTime.currentDateTime())
-        self.dateTo.setDateTime(QDateTime.currentDateTime())
-        self.dateTo.setMaximumDateTime(QDateTime.currentDateTime())
+        self.dateFrom.setDate(date.today() - timedelta(days=1))
+        self.dateFrom.setMaximumDate(date.today() - timedelta(days=1))
+        self.dateTo.setDate(date.today() - timedelta(days=1))
+        self.dateTo.setMaximumDate(date.today() - timedelta(days=1))
+        # self.dateFrom.setDateTime(date.today() - timedelta(days=1))
+        # self.dateFrom.setMaximumDateTime(date.today() - timedelta(days=1))
+        # self.dateTo.setDateTime(date.today() - timedelta(days=1))
+        # self.dateTo.setMaximumDateTime(date.today() - timedelta(days=1))
+        # self.dateTo.setMaximumDateTime(QDateTime.currentDateTime())
 
         self.dateFrom.dateChanged.connect(self.date_changed)
         self.dateTo.dateChanged.connect(self.date_changed)

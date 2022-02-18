@@ -2,6 +2,8 @@
 
 """This module provides views to manage the main window."""
 
+from datetime import date, timedelta
+
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import Qt
 
@@ -20,9 +22,10 @@ from PyQt5.QtWidgets import (
 
 from .model import ApiModel, MonthlyModel
 from .database import populate_location_cbo
-from datetime import date
+
 from .api import history_day
 from ui.main_form import Ui_WUnderground
+from ui.multi_station_picker import UIStationPicker
 # import .api
 
 
@@ -34,8 +37,14 @@ class Window(QMainWindow):
         super().__init__(parent)
         # self.window = QMainWindow()
         self.main_ui = Ui_WUnderground()
-        self.main_ui.setupUi(self.window)
-        self.window.show()
+        self.main_ui.setupUi(self)
+        # self.window.show()
+
+        # app = QtWidgets.QApplication(sys.argv)
+        # WUnderground = QtWidgets.QMainWindow()
+        # ui = Ui_WUnderground()
+        # ui.setupUi(WUnderground)
+        # WUnderground.show()
 
         # uic.loadUi("ui\\main\\form.ui", self)
 
@@ -49,13 +58,22 @@ class Window(QMainWindow):
         self.main_ui.comboBox_WeatherStation.addItems(populate_location_cbo())
 
         # Set the max date and From and To dates to todays date
-        self.main_ui.dateFrom.setMaximumDate(date.today())
-        self.main_ui.dateTo.setMaximumDate(date.today())
-        self.main_ui.dateFrom.setDate(date.today())
-        self.main_ui.dateTo.setDate(date.today())
+        self.main_ui.dateFrom.setMaximumDate(date.today() - timedelta(days=1))
+        self.main_ui.dateTo.setMaximumDate(date.today() - timedelta(days=1))
+        self.main_ui.dateFrom.setDate(date.today() - timedelta(days=1))
+        self.main_ui.dateTo.setDate(date.today() - timedelta(days=1))
+
+        # d = datetime.today() - timedelta(days=days_to_subtract)
 
         # Set the "Fetch" button click event
         self.main_ui.btnFetchData.clicked.connect(self.fetch_data)
+        self.main_ui.actionMultiple_Stations.triggered.connect(self.multi_station_ui)
+
+    def multi_station_ui(self):
+        self.window = QMainWindow()
+        self.multi_ui = UIStationPicker()
+        self.multi_ui.setup_ui()
+        self.window.show()
 
     '''
     Get the weather date for the weather station and date range
@@ -83,27 +101,6 @@ class Window(QMainWindow):
         self.main_ui.tableViewMonthly.resizeColumnsToContents()
 
 
-        # Create the table view widget
-        # self.table = QTableView()
-        # self.table.setModel(self.apiModel.model)
-        # self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        # self.table.resizeColumnsToContents()
-        #
-        # # Create buttons
-        # self.addButton = QPushButton("Add...")
-        # self.deleteButton = QPushButton("Delete")
-        # self.clearAllButton = QPushButton("Clear All")
-        #
-        # # Lay out the GUI
-        # layout = QVBoxLayout()
-        # layout.addWidget(self.addButton)
-        # layout.addWidget(self.deleteButton)
-        # layout.addStretch()
-        # layout.addWidget(self.clearAllButton)
-        # self.layout.addWidget(self.table)
-        # self.layout.addLayout(layout)
-
-
 class ApiUi(QWidget):
     def __init__(self):
         super(ApiUi, self).__init__()
@@ -122,18 +119,18 @@ class ApiUi(QWidget):
         self.labelStatus.setVisible(False)
 
         self.apiModel = ApiModel()
-        self.setupUI()
+        self.setup_ui()
 
-    def setupUI(self):
+    def setup_ui(self):
         """Setup the main window's GUI."""
         # Create the table view widget
         self.tblAPI.setModel(self.apiModel.model)
         self.tblAPI.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tblAPI.resizeColumnsToContents()
 
-        self.btnAdd.clicked.connect(self.openAddDialog)
+        self.btnAdd.clicked.connect(self.open_add_dialog)
 
-    def openAddDialog(self):
+    def open_add_dialog(self):
         """Open the Add Contact dialog."""
         dialog = AddDialog(self)
         if dialog.exec() == QDialog.Accepted:
@@ -141,9 +138,8 @@ class ApiUi(QWidget):
             self.tblAPI.resizeColumnsToContents()
 
 
-"""Add Contact dialog."""
 class AddDialog(QDialog):
-
+    """ Add new API """
     def __init__(self, parent=None):
         """Initializer."""
         super().__init__(parent=parent)
@@ -152,17 +148,21 @@ class AddDialog(QDialog):
         self.setLayout(self.layout)
         self.data = None
 
-        self.setupUI()
+        self.api_field = QLineEdit()
+        self.active_field = QLineEdit()
+        self.note_field = QLineEdit()
 
-    def setupUI(self):
-        """Setup the Add Contact dialog's GUI."""
+        self.buttonsBox = QDialogButtonBox(self)
+
+        self.setup_ui()
+
+    def setup_ui(self):
+        """ Setup the Add API GUI """
+
         # Create line edits for data fields
-        self.apiField = QLineEdit()
-        self.apiField.setObjectName("API")
-        self.activeField = QLineEdit()
-        self.activeField.setObjectName("Active")
-        self.noteField = QLineEdit()
-        self.noteField.setObjectName("Note")
+        self.api_field.setObjectName("API")
+        self.active_field.setObjectName("Active")
+        self.note_field.setObjectName("Note")
 
         # Lay out the data fields
         layout = QFormLayout()
@@ -172,7 +172,6 @@ class AddDialog(QDialog):
         self.layout.addLayout(layout)
 
         # Add standard buttons to the dialog and connect them
-        self.buttonsBox = QDialogButtonBox(self)
         self.buttonsBox.setOrientation(Qt.Horizontal)
         self.buttonsBox.setStandardButtons(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel
