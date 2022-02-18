@@ -25,6 +25,7 @@ class DB(object):
         # indicates if selected data is to be returned or printed
         self.display = False
 
+        # Connect to the database when initialized
         self.connect()
 
         # execute setup statements
@@ -161,6 +162,16 @@ class DB(object):
             '''
         self.cursor.executemany(sql, data)
         self.connection.commit()
+
+    def populate_location_cbo(self):
+        self.cursor.execute("SELECT location FROM tbl_location WHERE active = 1 ORDER BY location")
+        # rows = c.fetchall()
+        list_of_strings = [item[0] for item in self.cursor.fetchall()]
+
+        # self.connection.commit()
+        # self.connection.close()
+
+        return list_of_strings
 
     # def execute(self, statements):
     #     """Execute complete SQL statements.

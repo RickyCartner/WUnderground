@@ -1,10 +1,14 @@
 import sys
+from datetime import date
+from time import sleep
+
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QListWidget\
     , QLabel, QDateEdit, QPushButton, QProgressBar, QTextEdit
 from PyQt5 import uic, Qt
 from PyQt5.QtCore import QDate, QDateTime
-from datetime import date
-from time import sleep
+
+# Local
+from wunderground.database import DB
 
 
 class UIStationPicker(QMainWindow):
@@ -13,7 +17,7 @@ class UIStationPicker(QMainWindow):
         super(UIStationPicker, self).__init__()
 
         # Load the ui file
-        uic.loadUi("station_picker.ui", self)
+        uic.loadUi("ui\\multi_station_picker.ui", self)
 
         # Define our Widgets
         self.labelFrom = self.findChild(QLabel, "labelFrom")
@@ -43,7 +47,6 @@ class UIStationPicker(QMainWindow):
         #
         # self.listWidget.sortItems(order='AscendingOrder')
 
-        # Do something
         # set the date pickers to the current date and prevent future date availability
         self.dateFrom.setDateTime(QDateTime.currentDateTime())
         self.dateFrom.setMaximumDateTime(QDateTime.currentDateTime())
@@ -96,9 +99,14 @@ class UIStationPicker(QMainWindow):
         # self.textDateCheck.setPlainText(f'{qDate.month()}/{qDate.day()}/{qDate.year()}')
 
     def load_stations(self):
-        station_list = ['KSCBEAUF36', 'KSCBEAUF78', 'KSCBEAUF100', 'KSCBEAUF13', 'KSCBEAUF40', 'KSCBEAUF105'
-                        , 'KSCLADYS3', 'KSCBEAUF39', 'KSCBEAUF119', 'KSCBEAUF45', 'KSCBEAUF117'
-                        , 'KSCBEAUF46', 'KSCBEAUF97']
+        # Connect to the database, return a list of active stations, close the connection
+        db = DB()
+        station_list = db.populate_location_cbo()
+        db.close()
+
+        # station_list = ['KSCBEAUF36', 'KSCBEAUF78', 'KSCBEAUF100', 'KSCBEAUF13', 'KSCBEAUF40', 'KSCBEAUF105'
+        #                 , 'KSCLADYS3', 'KSCBEAUF39', 'KSCBEAUF119', 'KSCBEAUF45', 'KSCBEAUF117'
+        #                 , 'KSCBEAUF46', 'KSCBEAUF97']
         # station_list.sort(reverse=True)
         self.listWidgetLeft.addItems(station_list)
         self.listWidgetLeft.setSortingEnabled(True)
@@ -106,13 +114,19 @@ class UIStationPicker(QMainWindow):
         self.listWidgetRight.setSortingEnabled(True)
 
     def add_station(self, all_stations=False):
+        """
+        Add stations from left column to the right column
+        """
         if not all_stations:
+            # Add one station at a time to the right column
             row = self.listWidgetLeft.currentRow()
             row_item = self.listWidgetLeft.takeItem(row)
             self.listWidgetRight.addItem(row_item)
         else:
+            # Transfer all of the stations to the right column
             row_count = self.listWidgetLeft.count()
             for i in range(row_count):
+
                 row_item = self.listWidgetLeft.takeItem(0)
                 # item_name = self.listWidgetLeft.item(i).text()
                 self.listWidgetRight.addItem(row_item)
@@ -121,11 +135,16 @@ class UIStationPicker(QMainWindow):
         # station_list.sort(reverse=True)
 
     def remove_station(self, all_stations=False):
+        """
+        Remove stations from right column to the left column
+        """
         if not all_stations:
+            # Remove one station at a time from the right column
             row = self.listWidgetRight.currentRow()
             row_item = self.listWidgetRight.takeItem(row)
             self.listWidgetLeft.addItem(row_item)
         else:
+            # Remove all of the stations from the right column
             row_count = self.listWidgetRight.count()
             for i in range(row_count):
                 row_item = self.listWidgetRight.takeItem(0)
@@ -133,6 +152,11 @@ class UIStationPicker(QMainWindow):
                 self.listWidgetLeft.addItem(row_item)
 
 
-app = QApplication(sys.argv)
-UIWindow = UIStationPicker()
-sys.exit(app.exec_())
+def main():
+    app = QApplication(sys.argv)
+    UIWindow = UIStationPicker()
+    sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()
