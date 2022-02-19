@@ -44,7 +44,7 @@ def history_day(
 
 			# Get a list of Key fields
 			value_list = {}
-			print(type(value_list))
+			# print(type(value_list))
 			# test_list = ['stationID','obsTimeLocal','imperial']
 			# res = None
 			# if all(sub in [station_dict['observations'], test_list]):

@@ -29,6 +29,8 @@ from ui.multi_station_picker import UIStationPicker
 # import .api
 
 
+# TODO: Need to add a button to clear all of the data to reset
+
 class Window(QMainWindow):
     """ Main Window """
 
@@ -50,9 +52,8 @@ class Window(QMainWindow):
 
         self.setup_ui()
 
-    """Setup the main window's GUI."""
     def setup_ui(self):
-
+        """Setup the main window's GUI."""
         # Clear the combobox and add the list of locations from the database
         self.main_ui.comboBox_WeatherStation.clear()
         self.main_ui.comboBox_WeatherStation.addItems(populate_location_cbo())
@@ -63,23 +64,27 @@ class Window(QMainWindow):
         self.main_ui.dateFrom.setDate(date.today() - timedelta(days=1))
         self.main_ui.dateTo.setDate(date.today() - timedelta(days=1))
 
-        # d = datetime.today() - timedelta(days=days_to_subtract)
+        # Disable editing cells in the table view
+        self.main_ui.tableViewMonthly.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         # Set the "Fetch" button click event
         self.main_ui.btnFetchData.clicked.connect(self.fetch_data)
         self.main_ui.actionMultiple_Stations.triggered.connect(self.multi_station_ui)
 
-    def multi_station_ui(self):
-        self.window = QMainWindow()
-        self.multi_ui = UIStationPicker()
-        self.multi_ui.setup_ui()
-        self.window.show()
+        self.main_ui.tableViewMonthly.doubleClicked.connect(self.station_details_by_date)
 
-    '''
-    Get the weather date for the weather station and date range
-    and display it on the main form
-    '''
+    def multi_station_ui(self):
+        """
+        Open the UI for selecting multiple stations
+        """
+        self.multi_ui = UIStationPicker()
+        self.multi_ui.show()
+
     def fetch_data(self):
+        """
+        Get the weather date for the weather station and date range
+        and display it on the main form
+        """
         # Get the From and To dates and convert them to a format the API can read
         begin_date = self.main_ui.dateFrom.date()
         begin_date = begin_date.toString('yyyyMMdd')
@@ -99,6 +104,43 @@ class Window(QMainWindow):
         self.main_ui.tableViewMonthly.setModel(self.monthly_model.model)
         self.main_ui.tableViewMonthly.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.main_ui.tableViewMonthly.resizeColumnsToContents()
+
+    def station_details_by_date(self, item):
+        items_dict = {}
+        for column, idx in enumerate(self.main_ui.tableViewMonthly.selectionModel().selectedIndexes()):
+            header = self.main_ui.tableViewMonthly.model().headerData(column, Qt.Horizontal)
+            items_dict[header] = self.main_ui.tableViewMonthly.model().data(idx)
+
+        self.main_ui.txtTempHigh.setText(str(items_dict.get('Temp High')))
+        self.main_ui.txtTempAvg.setText(str(items_dict.get('Temp Avg')))
+        self.main_ui.txtTempLow.setText(str(items_dict.get('Temp Low')))
+
+        self.main_ui.txtDewPointHigh.setText(str(items_dict.get('Dew Point High')))
+        self.main_ui.txtDewPointAvg.setText(str(items_dict.get('Dew Point Avg')))
+        self.main_ui.txtDewPointLow.setText(str(items_dict.get('Dew Point Low')))
+
+        self.main_ui.txtHeatIndexHigh.setText(str(items_dict.get('Heat Index High')))
+        self.main_ui.txtHeatIndexAvg.setText(str(items_dict.get('Heat Index Avg')))
+        self.main_ui.txtHeatIndexLow.setText(str(items_dict.get('Heat Index Low')))
+
+        self.main_ui.txtWindSpeedHigh.setText(str(items_dict.get('Speed High')))
+        self.main_ui.txtWindSpeedAvg.setText(str(items_dict.get('Speed Avg')))
+        self.main_ui.txtWindSpeedLow.setText(str(items_dict.get('Speed Low')))
+
+        self.main_ui.txtWindGustHigh.setText(str(items_dict.get('Gust High')))
+        self.main_ui.txtWindGustAvg.setText(str(items_dict.get('Gust Avg')))
+        self.main_ui.txtWindGustLow.setText(str(items_dict.get('Gust Low')))
+
+        self.main_ui.txtWindChillHigh.setText(str(items_dict.get('Chill High')))
+        self.main_ui.txtWindChillAvg.setText(str(items_dict.get('Chill Avg')))
+        self.main_ui.txtWindChillLow.setText(str(items_dict.get('Chill Low')))
+
+        self.main_ui.txtPressureMax.setText(str(items_dict.get('Pressure Max')))
+        self.main_ui.txtPressureMin.setText(str(items_dict.get('Pressure Min')))
+        self.main_ui.txtPressureTrend.setText(str(items_dict.get('Pressure Trend')))
+
+        self.main_ui.txtPrecipationRate.setText(str(items_dict.get('Precipitation Rate')))
+        self.main_ui.txtPrecipationTotal.setText(str(items_dict.get('Precipitation Total')))
 
 
 class ApiUi(QWidget):
