@@ -54,6 +54,25 @@ class MonthlyModel:
         table_model = QSqlTableModel()
         table_model.setQuery(table_query)
         table_model.select()
+        # headers = ("Station ID", "Record Date", "Temp High", "Temp Low", "Temp Avg"
+        #            , "Dew Point High", "Dew Point Low", "Dew Point Avg"
+        #            , "Heat Index High", "Heat Index Low", "Heat Index Avg"
+        #            , "Speed High", "Speed Low", "Speed Avg"
+        #            , "Gust High", "Gust Low", "Gust Avg"
+        #            , "Chill High", "Chill Low", "Chill Avg"
+        #            , "Pressure Max", "Pressure Min", "Pressure Trend"
+        #            , "Precipitation Rate", "Precipitation Total")
+
+        for columnIndex, header in enumerate(self.add_model_headers()):
+            table_model.setHeaderData(columnIndex, Qt.Horizontal, header)
+
+        # Close the connection to the database
+        create_connection("closeDB")
+
+        return table_model
+
+    @staticmethod
+    def add_model_headers():
         headers = ("Station ID", "Record Date", "Temp High", "Temp Low", "Temp Avg"
                    , "Dew Point High", "Dew Point Low", "Dew Point Avg"
                    , "Heat Index High", "Heat Index Low", "Heat Index Avg"
@@ -63,14 +82,7 @@ class MonthlyModel:
                    , "Pressure Max", "Pressure Min", "Pressure Trend"
                    , "Precipitation Rate", "Precipitation Total")
 
-        for columnIndex, header in enumerate(headers):
-            table_model.setHeaderData(columnIndex, Qt.Horizontal, header)
-
-        # Close the connection to the database
-        create_connection("closeDB")
-
-        return table_model
-
+        return headers
 
 
 class ApiModel:

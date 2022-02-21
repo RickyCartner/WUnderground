@@ -8,11 +8,13 @@
 
 
 def entry_menu():
-    msg = int(input('''
-        Enter a menu option below:
-        1) Run main application
-        2) Run multi_station_picker
-        Option: '''))
+    # msg = int(input('''
+    #     Enter a menu option below:
+    #     1) Run main application
+    #     2) Run multi_station_picker
+    #     Option: '''))
+
+    msg = 1
 
     if msg == 1:
         from wunderground.main import main
