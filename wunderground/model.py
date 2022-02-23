@@ -6,13 +6,15 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlTableModel, QSqlQuery
 from .database import create_connection
+from wunderground.database import DB
 from datetime import datetime, timedelta
 
 
 class MonthlyModel:
-    def __init__(self, station_id, begin_date, end_date):
+    def __init__(self, station_id, begin_date, end_date, multi_station=False):
 
         # Get variables and insert dashes into dates
+        self.multi_station = multi_station
         self.station_id = station_id
         self.begin_date = datetime.strptime(begin_date, '%Y%m%d').date().isoformat()
         end_date_orig = datetime.strptime(end_date, '%Y%m%d').date()
@@ -24,6 +26,7 @@ class MonthlyModel:
         # Create a connection to the database
         create_connection("createConnection")
 
+
         # Call the method to display weather data in the table model
         self.model = self.create_model()
 
@@ -33,10 +36,15 @@ class MonthlyModel:
         """Create and set up the model."""
 
         table_query = QSqlQuery("weather.db")
+        if self.multi_station:
+            table_query.prepare(f"""SELECT * FROM tbl_weather_data
+                                WHERE stationID IN (SELECT location FROM tbl_location_display_temp)
+                                AND obsTimeLocal BETWEEN :begin_date AND :end_date""")
+        else:
+            table_query.prepare("""SELECT * FROM tbl_weather_data
+                                        WHERE stationID = :stationID
+                                        AND obsTimeLocal BETWEEN :begin_date AND :end_date""")
 
-        table_query.prepare("""SELECT * FROM tbl_weather_data
-                            WHERE stationID = :stationID
-                            AND obsTimeLocal BETWEEN :begin_date AND :end_date""")
         table_query.bindValue(":stationID", self.station_id)
         table_query.bindValue(":begin_date", self.begin_date)
         table_query.bindValue(":end_date", self.end_date)

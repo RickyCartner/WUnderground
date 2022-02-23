@@ -26,7 +26,8 @@ from .database import populate_location_cbo
 
 from .api import history_day
 from ui.main_form import Ui_WUnderground
-from ui.multi_station_picker import UIStationPicker
+# from ui.multi_station_picker import UIStationPicker
+from ui.multi_station_picker_ui import UIStationPicker
 # import .api
 
 
@@ -83,8 +84,12 @@ class Window(QMainWindow):
         """
         Open the UI for selecting multiple stations
         """
+        self.window = QMainWindow()
         self.multi_ui = UIStationPicker()
-        self.multi_ui.show()
+        self.multi_ui.setupUi(self.window, self.main_ui)
+        self.window.show()
+        # self.multi_ui = UIStationPicker(Window)
+        # self.multi_ui.show()
 
     def fetch_data(self):
         """

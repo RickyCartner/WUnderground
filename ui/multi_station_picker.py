@@ -4,16 +4,17 @@ from time import sleep
 
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QListWidget\
     , QLabel, QDateEdit, QPushButton, QProgressBar, QTextEdit
-from PyQt5 import uic, Qt
+from PyQt5 import uic, QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDate, QDateTime
 
 # Local
 from wunderground.database import DB
+from wunderground.api import history_day
 
 
 class UIStationPicker(QMainWindow):
 
-    def __init__(self):
+    def __init__(self, ):
         super(UIStationPicker, self).__init__()
 
         # Load the ui file
@@ -22,7 +23,7 @@ class UIStationPicker(QMainWindow):
         self.setup_ui()
 
     def setup_ui(self):
-        # Define our Widgets
+        # Define the Widgets
         self.labelFrom = self.findChild(QLabel, "labelFrom")
         self.labelTo = self.findChild(QLabel, "labelTo")
         self.dateFrom = self.findChild(QDateEdit, "dateFrom")
@@ -41,6 +42,7 @@ class UIStationPicker(QMainWindow):
 
         # add stations to the left side list
         self.load_stations()
+
         # self.listStationMainList
         # self.listWidget = QListWidget()
         # self.listWidget.item()
@@ -76,8 +78,14 @@ class UIStationPicker(QMainWindow):
         self.show()
 
     def search_clicked(self):
+        self.main_window = Window()
+
         f_date = self.dateFrom.dateTime()
         t_date = self.dateTo.dateTime()
+
+        # used to send to api call
+        from_date = f_date.toString('yyyyMMdd')
+        to_date = t_date.toString('yyyyMMdd')
 
         if f_date > t_date:
             self.textDateCheck.setPlainText(f'From Date cannot be prior to To Date')
@@ -87,12 +95,36 @@ class UIStationPicker(QMainWindow):
         self.progressBar.setVisible(True)
 
         # TODO: Need to add another thread for this.
-        row_count = self.listWidgetRight.count()
-        for i in range(row_count):
+
+        # Get the list of items to select data
+        item_list = [self.listWidgetRight.item(i).text() for i in range(self.listWidgetRight.count())]
+
+        for count, item in enumerate(item_list):
+            # print(count, item)
+            history_day(item, from_date, to_date)
+
             # update progress bar
-            row_progress = int(i+1 / row_count) * 100
-            self.progressBar.setValue(50)
-            # sleep(1)
+            row_progress = int(count + 1 / self.listWidgetRight.count()) * 100
+            self.main_window.label_info_station_id.setText("Hello Ricky")
+
+
+
+        # row_count = self.listWidgetRight.count()
+        # for i in range(row_count):
+        #     row_item = self.listWidgetLeft
+        #     # item_name = self.listWidgetLeft.item(i).text()
+        #     self.listWidgetRight.addItem(row_item)
+        #
+        # for i in range(row_count):
+        #     # update progress bar
+        #     row_progress = int(i+1 / row_count) * 100
+        #     self.progressBar.setValue(50)
+        #     # sleep(1)
+        #
+        #     weather_station = self.listWidgetRight.item(i)
+        #
+        #     # Use api.py, history_day function
+        #     history_day(weather_station, from_date, to_date)
 
         # self.textDateCheck.setPlainText(f'{qDate.month()}/{qDate.day()}/{qDate.year()}')
         pass

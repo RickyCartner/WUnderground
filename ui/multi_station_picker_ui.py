@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
+from datetime import date, timedelta
+from time import sleep
+
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QListWidget\
+    , QLabel, QDateEdit, QPushButton, QProgressBar, QTextEdit, QAbstractItemView
+from PyQt5 import uic, QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QDate, QDateTime
+
+# Local
+from wunderground.database import DB
+from wunderground.api import history_day
+from wunderground.model import MonthlyModel
 
 
-class Ui_SecondWindow(object):
-    def setupUi(self, SecondWindow):
+class UIStationPicker(object):
+    def setupUi(self, SecondWindow, MainWindow):
         SecondWindow.setObjectName("SecondWindow")
         SecondWindow.resize(433, 409)
         self.labelFrom = QtWidgets.QLabel(SecondWindow)
@@ -98,6 +110,26 @@ class Ui_SecondWindow(object):
         SecondWindow.setTabOrder(self.btnSearch, self.textDateCheck)
         SecondWindow.setTabOrder(self.textDateCheck, self.btnCancel)
 
+
+        self.load_stations()
+
+        # set the date pickers to the current date and prevent future date availability
+        self.dateFrom.setDate(date.today() - timedelta(days=1))
+        self.dateFrom.setMaximumDate(date.today() - timedelta(days=1))
+        self.dateTo.setDate(date.today() - timedelta(days=1))
+        self.dateTo.setMaximumDate(date.today() - timedelta(days=1))
+
+        self.dateFrom.dateChanged.connect(self.date_changed)
+        self.dateTo.dateChanged.connect(self.date_changed)
+        self.btnSearch.clicked.connect(lambda: self.search_clicked(MainWindow))
+        self.btnAdd.clicked.connect(self.add_station)
+        self.btnAddAll.clicked.connect(lambda x: self.add_station(True))
+        self.btnRemove.clicked.connect(self.remove_station)
+        self.btnRemoveAll.clicked.connect(lambda x: self.remove_station(True))
+
+        self.listStationMainList.itemChanged.connect(self.sort_list)
+        self.listStationSearch.itemChanged.connect(self.sort_list)
+
     def retranslateUi(self, SecondWindow):
         _translate = QtCore.QCoreApplication.translate
         SecondWindow.setWindowTitle(_translate("SecondWindow", "SecondWindow"))
@@ -116,12 +148,132 @@ class Ui_SecondWindow(object):
         self.btnAddAll.setText(_translate("SecondWindow", "Add All >>"))
         self.btnRemoveAll.setText(_translate("SecondWindow", "<< Remove All"))
 
+    def search_clicked(self, main_window):
+        f_date = self.dateFrom.dateTime()
+        t_date = self.dateTo.dateTime()
+
+        # used to send to api call
+        from_date = f_date.toString('yyyyMMdd')
+        to_date = t_date.toString('yyyyMMdd')
+
+        if f_date > t_date:
+            self.textDateCheck.setPlainText(f'From Date cannot be prior to To Date')
+            return
+
+        self.progressBar.setValue(0)
+        self.progressBar.setVisible(True)
+
+        # TODO: Need to add another thread for this.
+
+        # Get the list of items to select data
+        item_list = [self.listStationSearch.item(i).text() for i in range(self.listStationSearch.count())]
+
+        # Connect to the database, return a list of active stations, close the connection
+        db = DB()
+        # Reset temp table for new population
+        db.delete_records_from_location_temp()
+
+
+        for count, item in enumerate(item_list):
+            # print(count, item)
+
+            # download the station data
+            history_day(item, from_date, to_date)
+
+            # temporarily add station ID to temp table
+            db.add_record_to_location_temp(item)
+
+
+            # update progress bar
+            row_progress = int(count + 1 / self.listStationSearch.count()) * 100
+
+        db.close()
+
+        # Call the model to populate the table module
+        if self.listStationSearch.count() > 1:
+            multi_station_count = True
+        else:
+            multi_station_count = False
+
+        # Create string from list for use in query
+        station_list_string = ""
+        # for item in item_list:
+        #     station_list_string += f"{item}', '"
+        #
+        # station_list_string = station_list_string.rstrip(", '")
+
+        station_list_temp = ', '.join([str(elem) for elem in item_list])
+
+
+        self.monthly_model = MonthlyModel(station_list_temp, from_date, to_date, multi_station_count)
+
+        # Create the table view widget
+        main_window.tableViewMonthly.setModel(self.monthly_model.model)
+        main_window.tableViewMonthly.setSelectionBehavior(QAbstractItemView.SelectRows)
+        main_window.tableViewMonthly.resizeColumnsToContents()
+
+    def load_stations(self):
+        # Connect to the database, return a list of active stations, close the connection
+        db = DB()
+        station_list = db.populate_location_cbo()
+        db.close()
+
+        self.listStationMainList.addItems(station_list)
+        self.listStationMainList.setSortingEnabled(True)
+        self.listStationMainList.sortItems()
+        self.listStationSearch.setSortingEnabled(True)
+
+    def sort_list(self):
+        self.listStationMainList.sortItems()
+        self.listStationSearch.sortItems()
+
+    def date_changed(self, qDate):
+        # print(f'{qDate.month()}/{qDate.day()}/{qDate.year()}')
+        self.textDateCheck.clear()
+        # self.textDateCheck.setPlainText(f'{qDate.month()}/{qDate.day()}/{qDate.year()}')
+
+    def add_station(self, all_stations=False):
+        """
+        Add stations from left column to the right column
+        """
+        if not all_stations:
+            # Add one station at a time to the right column
+            row = self.listStationMainList.currentRow()
+            row_item = self.listStationMainList.takeItem(row)
+            self.listStationSearch.addItem(row_item)
+        else:
+            # Transfer all of the stations to the right column
+            row_count = self.listStationMainList.count()
+            for i in range(row_count):
+
+                row_item = self.listStationMainList.takeItem(0)
+                # item_name = self.listWidgetLeft.item(i).text()
+                self.listStationSearch.addItem(row_item)
+
+    def remove_station(self, all_stations=False):
+        """
+        Remove stations from right column to the left column
+        """
+        if not all_stations:
+            # Remove one station at a time from the right column
+            row = self.listStationSearch.currentRow()
+            row_item = self.listStationSearch.takeItem(row)
+            self.listStationMainList.addItem(row_item)
+        else:
+            # Remove all of the stations from the right column
+            row_count = self.listStationSearch.count()
+            for i in range(row_count):
+                row_item = self.listStationSearch.takeItem(0)
+                # item_name = self.listWidgetLeft.item(i).text()
+                self.listStationMainList.addItem(row_item)
+
+
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     SecondWindow = QtWidgets.QWidget()
-    ui = Ui_SecondWindow()
+    ui = UIStationPicker()
     ui.setupUi(SecondWindow)
     SecondWindow.show()
     sys.exit(app.exec_())

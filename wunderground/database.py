@@ -139,6 +139,18 @@ class DB(object):
 
         return True
 
+    def delete_records_from_location_temp(self):
+        self.cursor.execute("DELETE FROM tbl_location_display_temp")
+        self.connection.commit()
+
+
+    def add_record_to_location_temp(self, station_id):
+        self.cursor.execute("""
+            INSERT INTO tbl_location_display_temp ('location') 
+            VALUES (?)""", (station_id,))
+
+        self.connection.commit()
+
     def execute(self, data):
         sql = '''
                 INSERT OR IGNORE INTO tbl_weather_data ('stationID', 'obsTimeLocal'

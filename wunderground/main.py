@@ -11,7 +11,7 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 from PyQt5.QtWidgets import QApplication
-from .database import create_connection
+from wunderground.database import create_connection, DB
 from .views_working import Window, ApiUi
 
 
@@ -30,6 +30,10 @@ def main():
         tables if they do not currently exist. I.E. The database was accidentally
         deleted.
     '''
+    # Reset temp table for new population
+    db = DB()
+    db.delete_records_from_location_temp()
+    db.close()
 
     # Create the main window
     win = Window()
