@@ -6,7 +6,7 @@ from datetime import date, timedelta, datetime
 
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QStandardItemModel
+from PyQt5.QtGui import QStandardItemModel, QIcon
 
 from PyQt5.QtWidgets import (
     QAbstractItemView,
@@ -18,16 +18,20 @@ from PyQt5.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QFormLayout,
-    QMessageBox
+    QMessageBox, QComboBox
 )
 
 from .model import ApiModel, MonthlyModel
-from .database import populate_location_cbo
+from .database import (
+    populate_location_cbo, update_location_cbo,
+    delete_location, delete_history
+)
 
 from .api import history_day
 from ui.main_form import Ui_WUnderground
 # from ui.multi_station_picker import UIStationPicker
 from ui.multi_station_picker_ui import UIStationPicker
+from wunderground.export_to_excel import open_excel
 # import .api
 
 
@@ -73,23 +77,113 @@ class Window(QMainWindow):
         # Disable editing cells in the table view
         self.main_ui.tableViewMonthly.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
+        self._create_actions()
+
+    def _create_actions(self):
         # Set the "Fetch" button click event
         self.main_ui.btnFetchData.clicked.connect(self.fetch_data)
         self.main_ui.btnClearData.clicked.connect(self.clear_data)
+
+        # File menu items
+        self.main_ui.actionExport.triggered.connect(self.export_to_excel)
+
+        # Edit menu items
         self.main_ui.actionMultiple_Stations.triggered.connect(self.multi_station_ui)
+        self.main_ui.actionAPI_Key.triggered.connect(self.add_api_key)
+        self.main_ui.actionAddStation.triggered.connect(self.open_add_dialog)
+        self.main_ui.actionDeleteStation.triggered.connect(self.delete_location)
+
+        # Help menu items
+        self.main_ui.actionAbout.triggered.connect(self.about_me)
 
         self.main_ui.tableViewMonthly.doubleClicked.connect(self.station_details_by_date)
 
+    def about_me(self):
+        AboutApplication(self)
+
+    def open_add_dialog(self):
+        """Open the Add Location dialog box"""
+        dialog = AddLocationDialog(self)
+        dialog.setWindowIcon(QIcon("images/add-station.png"))
+
+        # If [OK] is pressed, add the record
+        if dialog.exec() == QDialog.Accepted:
+            query_status = update_location_cbo(dialog.data)
+
+            if query_status == "updated":
+                QMessageBox.information(
+                    self,
+                    "Successful Update",
+                    f"Record was successfully added",
+                )
+            else:
+                QMessageBox.critical(
+                    self,
+                    "No change",
+                    f"This record already exists",
+                )
+
+            self.main_ui.comboBox_WeatherStation.clear()
+            self.main_ui.comboBox_WeatherStation.addItems(populate_location_cbo())
+
+    def delete_location(self):
+
+        # Call the function to select a location to delete and return the location as "dialog"
+        dialog = DeleteLocationDialog(self)
+
+        # Call/Return results from the delete method
+        if dialog.exec_() == QDialog.Accepted:
+            # Call database.py to remove weather station from database
+            delete_location_status = delete_location(dialog.data)
+            delete_history_status = delete_history(dialog.data)
+
+            # Set up the message box
+            msg = QMessageBox()
+            msg.setWindowTitle("Delete Results")
+            msg.setWindowIcon(QIcon("images/weather-station.png"))
+
+            # If no error, reset combobox and display message, otherwise display error message
+            if delete_location_status == "Delete Successful" and delete_history_status == "Delete Successful":
+                self.main_ui.comboBox_WeatherStation.clear()
+                self.main_ui.comboBox_WeatherStation.addItems(populate_location_cbo())
+
+                msg.setIcon(QMessageBox.Information)
+                msg.setText(dialog.data + " has been removed")
+
+            elif delete_location_status != "Delete Successful":
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText(delete_location_status)
+
+            elif delete_history_status != "Delete Successful":
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText(delete_history_status)
+
+            msg.exec()
+
     def multi_station_ui(self):
-        """
-        Open the UI for selecting multiple stations
-        """
-        self.window = QMainWindow()
+        """ Open the UI for selecting multiple stations """
+
+        self.multi_window = QMainWindow()
         self.multi_ui = UIStationPicker()
-        self.multi_ui.setupUi(self.window, self.main_ui)
-        self.window.show()
-        # self.multi_ui = UIStationPicker(Window)
-        # self.multi_ui.show()
+        self.multi_ui.setupUi(self.multi_window, self.main_ui)
+        self.multi_window.show()
+
+    def export_to_excel(self):
+        """ Export data in table to xlsx """
+        status = Exporting(self.main_ui)
+
+    def add_api_key(self):
+        dialog = AddDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            print("Here i am")
+        else:
+            print("cancelled")
+            # self.apiModel.addAPI(dialog.data)
+            # self.tblAPI.resizeColumnsToContents()
+        # self.api_window = QDialog()
+        # self.api_ui = AddDialog()
+        # self.api_ui.setup_ui(self.api_window)
+        # self.api_window.show()
 
     def fetch_data(self):
         """
@@ -263,6 +357,16 @@ class AddDialog(QDialog):
 
     def setup_ui(self):
         """ Setup the Add API GUI """
+        # self.setWindowTitle("Add API")
+        # self.layout = QVBoxLayout()
+        # self.setLayout(self.layout)
+        # self.data = None
+        #
+        # self.api_field = QLineEdit()
+        # self.active_field = QLineEdit()
+        # self.note_field = QLineEdit()
+        #
+        # self.buttonsBox = QDialogButtonBox(self)
 
         # Create line edits for data fields
         self.api_field.setObjectName("API")
@@ -271,9 +375,9 @@ class AddDialog(QDialog):
 
         # Lay out the data fields
         layout = QFormLayout()
-        layout.addRow("API:", self.apiField)
-        layout.addRow("Active:", self.activeField)
-        layout.addRow("Note:", self.noteField)
+        layout.addRow("API:", self.api_field)
+        layout.addRow("Active:", self.active_field)
+        layout.addRow("Note:", self.note_field)
         self.layout.addLayout(layout)
 
         # Add standard buttons to the dialog and connect them
@@ -286,9 +390,12 @@ class AddDialog(QDialog):
         self.layout.addWidget(self.buttonsBox)
 
     def accept(self):
-        """Accept the data provided through the dialog."""
+        """
+        Accept the data provided through the dialog
+        The user must enter an API and select if it is active or not
+        """
         self.data = []
-        for field in (self.apiField, self.activeField):
+        for field in (self.api_field, self.active_field):
             if not field.text():
                 QMessageBox.critical(
                     self,
@@ -300,9 +407,239 @@ class AddDialog(QDialog):
 
             self.data.append(field.text())
 
-        self.data.append(self.noteField.text())
+        self.data.append(self.note_field.text())
 
         if not self.data:
             return
 
         super().accept()
+
+
+class Exporting:
+    """ Using the information in the Monthly Data model, export to an XLSX file """
+    def __init__(self, main_window):
+        mw = main_window
+        self.export_to_excel(mw)
+
+    def export_to_excel(self, main_window):
+
+        try:
+            # Get information from the Monthly Data model
+            # m = self.tableM.model()
+            # m = main_window.tableViewMonthly.model()
+            #
+            # # Find the last row
+            # m_last_record = m.rowCount() - 1
+            #
+            # # Weather location from the last row
+            # curr_location = m.data(m.index(m_last_record, 0))
+            #
+            # # Date from the last row
+            # curr_date = m.data(m.index(m_last_record, 1))
+            #
+            # # Convert from a string to a date (using the format given from the model)
+            # dt_curr_date = datetime.strptime(curr_date, '%Y-%m-%d').date()
+            #
+            # # Get the day of the last day of the month
+            # int_day = dt_curr_date.day
+            #
+            # # Get the first day of the month by subtracting the number of days in the month from the last day in the model
+            # from_date = str(dt_curr_date - timedelta(days=(int_day - 1)))
+            # to_date = str(dt_curr_date)
+
+            items_dict = {}
+            items_lst = []
+            model = main_window.tableViewMonthly.model()
+
+            # Loop through each item in the table and add to a dictionary.
+            for row in range(model.rowCount()):
+                for column in range(model.columnCount()):
+                    header = main_window.tableViewMonthly.model().headerData(column, Qt.Horizontal)
+                    idx = model.index(row, column)
+                    items_dict[header] = main_window.tableViewMonthly.model().data(idx)
+
+                # Copy the dictionary and append to a list
+                # The copy prevents the next loop from changing the data in the dictionary already added to the list
+                dict_copy = items_dict.copy()
+                items_lst.append(dict_copy)
+
+            # Pass the list of items to export
+            open_excel(items_lst)
+
+        # Error handling
+        except Exception as e:
+            print(e)
+            # self.display_message(2, str(e), "No Data")
+
+        return
+
+# ###########################################
+# Special message boxes
+# ###########################################
+
+
+class AddLocationDialog(QDialog):
+    """Add Website location"""
+
+    def __init__(self, parent=None):
+        """Initializer."""
+        super().__init__(parent=parent)
+        self.setWindowTitle("Add Location")
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)  # Remove question mark from header
+        self.setWindowIcon(QIcon("images/add-station.png"))
+        self.setFixedSize(250, 100)
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.data = None
+
+        self.setup_ui()
+
+    # Make each letter typed, a capitol letter
+    def on_changed(self, text):
+        self.location_field.setText(text.upper())
+
+    def setup_ui(self):
+        """Setup the Add Location dialog's GUI."""
+        # Create line edits for data fields
+        self.location_field = QLineEdit()
+        self.location_field.setObjectName("Location")
+        self.location_field.textChanged[str].connect(self.on_changed)
+
+        # Lay out the data fields
+        layout = QFormLayout()
+        layout.addRow("Location:", self.location_field)
+        self.layout.addLayout(layout)
+
+        # Add standard buttons to the dialog and connect them
+        self.buttons_box = QDialogButtonBox(self)
+        self.buttons_box.setOrientation(Qt.Horizontal)
+        self.buttons_box.setStandardButtons(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+            )
+        self.buttons_box.accepted.connect(self.accept)
+        self.buttons_box.rejected.connect(self.reject)
+        self.layout.addWidget(self.buttons_box)
+
+    def accept(self):
+        """Accept the data provided through the dialog."""
+
+        if not self.location_field.text():
+            QMessageBox.critical(
+                self,
+                "Error!",
+                f"You must enter a Location",
+            )
+            self.data = None  # Reset .data
+            return
+
+        self.data = self.location_field.text()
+
+        if not self.data:
+            return
+
+        super().accept()
+
+
+class DeleteLocationDialog(QDialog):
+    """Add Website location"""
+
+    def __init__(self, parent=None):
+        """Initializer."""
+        super().__init__(parent=parent)
+        self.setWindowTitle("Delete Location")
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)  # Remove question mark from header
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.setWindowIcon(QIcon("images/delete-station.png"))
+        self.setFixedSize(250, 100)
+        self.data = None
+
+        self.setup_ui()
+
+    def setup_ui(self):
+        """Setup the Delete Location dialog's GUI."""
+        # Create line edits for data fields
+        self.location_combobox = QComboBox(self)
+
+        # Populate the combobox to select a location to delete
+        self.location_combobox.clear()
+        self.location_combobox.addItems(populate_location_cbo())
+
+        # Lay out the data fields
+        layout = QFormLayout()
+        layout.addRow("Select Location:", self.location_combobox)
+        self.layout.addLayout(layout)
+
+        # Add standard buttons to the dialog and connect them
+        self.buttons_box = QDialogButtonBox(self)
+        self.buttons_box.setOrientation(Qt.Horizontal)
+        self.buttons_box.setStandardButtons(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+            )
+        self.buttons_box.accepted.connect(self.accept)
+        self.buttons_box.rejected.connect(self.reject)
+        self.layout.addWidget(self.buttons_box)
+
+    def accept(self):
+        """Accept the data provided through the dialog."""
+
+        button_reply = QMessageBox()
+        button_reply.setWindowTitle("Delete All Data")
+        button_reply.setText(
+            "This action will remove ALL data related to this weather station\n\n"
+            "Do you want to continue removing this weather station?"
+        )
+
+        button_reply.setIcon(QMessageBox.Question)
+        button_reply.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        button_reply.setDefaultButton(QMessageBox.No)
+        button_reply.setWindowIcon(QIcon("images/delete-station.png"))
+
+        # Get the results of the delete confirmation
+        if button_reply.exec_() == QMessageBox.Yes:
+            # If user selected OK, get the value of the location to delete
+            self.data = self.location_combobox.currentText()
+        else:
+            self.data = None  # Reset .data
+            return
+
+        if not self.data:
+            return
+
+        super().accept()
+
+
+class AboutApplication(QDialog):
+    """ About the application """
+
+    def __init__(self, parent=None):
+        """Initializer."""
+        super().__init__(parent=parent)
+        self.setWindowTitle("About Me")
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)  # Remove question mark from header
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        # self.setWindowIcon(QtGui.QIcon("images/delete-station.png"))
+        self.setFixedSize(250, 100)
+        self.data = None
+
+        self.setupUI()
+
+    def setupUI(self):
+        """Setup the Delete Location dialog's GUI."""
+        # Create line edits for data fields
+        button_reply = QMessageBox()
+        button_reply.setWindowTitle("About Application")
+        button_reply.setText("WUnderground Weather Information Collection\n\n"
+                             "Free, open-source application for collecting information\n"
+                             "from weather stations whose information is managed in WUnderground.\n\n"
+                             "Version: 1.0\n"
+                             "Author: Ricky Cartner\n"
+                             "Last Updated: 2/24/2022"
+                             )
+
+        button_reply.setIcon(QMessageBox.Information)
+        button_reply.setStandardButtons(QMessageBox.Ok)
+        button_reply.setDefaultButton(QMessageBox.Ok)
+
+        button_reply.exec_()

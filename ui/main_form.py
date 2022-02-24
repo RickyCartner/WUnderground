@@ -633,37 +633,59 @@ class Ui_WUnderground(object):
         self.verticalLayout_2.addWidget(self.frame_7)
         self.horizontalLayout_2.addWidget(self.frame_5)
         WUnderground.setCentralWidget(self.centralwidget)
+
+
         self.menubar = QtWidgets.QMenuBar(WUnderground)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1051, 21))
         self.menubar.setObjectName("menubar")
+
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
+
         self.menuEdit = QtWidgets.QMenu(self.menubar)
         self.menuEdit.setObjectName("menuEdit")
+
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         WUnderground.setMenuBar(self.menubar)
+
         self.statusbar = QtWidgets.QStatusBar(WUnderground)
         self.statusbar.setObjectName("statusbar")
         WUnderground.setStatusBar(self.statusbar)
+
         self.actionAPI_Key = QtWidgets.QAction(WUnderground)
         self.actionAPI_Key.setObjectName("actionAPI_Key")
+
         self.actionAbout = QtWidgets.QAction(WUnderground)
         self.actionAbout.setObjectName("actionAbout")
+
         self.actionExport = QtWidgets.QAction(WUnderground)
         self.actionExport.setObjectName("actionExport")
+
         self.actionExit = QtWidgets.QAction(WUnderground)
         self.actionExit.setObjectName("actionExit")
+
         self.actionMultiple_Stations = QtWidgets.QAction(WUnderground)
         self.actionMultiple_Stations.setObjectName("actionMultiple_Stations")
-        self.menuFile.addSeparator()
+
+        self.actionAddStation = QtWidgets.QAction(WUnderground)
+        self.actionAddStation.setObjectName("actionAddStation")
+
+        self.actionDeleteStation = QtWidgets.QAction(WUnderground)
+        self.actionDeleteStation.setObjectName("actionDeleteStation")
+
         self.menuFile.addAction(self.actionExport)
         self.menuFile.addSeparator()
-        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
+
         self.menuEdit.addAction(self.actionAPI_Key)
         self.menuEdit.addAction(self.actionMultiple_Stations)
+        self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.actionAddStation)
+        self.menuEdit.addAction(self.actionDeleteStation)
+
         self.menuHelp.addAction(self.actionAbout)
+
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -716,7 +738,7 @@ class Ui_WUnderground(object):
 
     def retranslateUi(self, WUnderground):
         _translate = QtCore.QCoreApplication.translate
-        WUnderground.setWindowTitle(_translate("WUnderground", "MainWindow"))
+        WUnderground.setWindowTitle(_translate("WUnderground", "WUnderground Weather Data"))
         self.label_11.setText(_translate("WUnderground", "Weather Station:"))
         self.labelFrom.setText(_translate("WUnderground", "From:"))
         self.labelTo.setText(_translate("WUnderground", "To:"))
@@ -753,6 +775,9 @@ class Ui_WUnderground(object):
         self.actionExport.setText(_translate("WUnderground", "Export"))
         self.actionExit.setText(_translate("WUnderground", "Exit"))
         self.actionMultiple_Stations.setText(_translate("WUnderground", "Select Multiple Stations"))
+
+        self.actionAddStation.setText(_translate("WUnderground", "Add Weather Station"))
+        self.actionDeleteStation.setText(_translate("WUnderground", "Delete Weather Station"))
 
 
 if __name__ == "__main__":

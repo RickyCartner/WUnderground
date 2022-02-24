@@ -10,7 +10,7 @@ from PyQt5 import uic, QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDate, QDateTime
 
 # Local
-from wunderground.database import DB
+from wunderground.database import DB, populate_location_cbo
 from wunderground.api import history_day
 from wunderground.model import MonthlyModel
 
@@ -19,10 +19,13 @@ class UIStationPicker(object):
     def setupUi(self, SecondWindow, MainWindow):
         SecondWindow.setObjectName("SecondWindow")
         SecondWindow.resize(433, 409)
+
+        font = QtGui.QFont()
+        font.setPointSize(9)
+
         self.labelFrom = QtWidgets.QLabel(SecondWindow)
         self.labelFrom.setGeometry(QtCore.QRect(30, 10, 81, 16))
-        font = QtGui.QFont()
-        font.setPointSize(10)
+
         self.labelFrom.setFont(font)
         self.labelFrom.setObjectName("labelFrom")
         self.dateTo = QtWidgets.QDateEdit(SecondWindow)
@@ -30,10 +33,12 @@ class UIStationPicker(object):
         self.dateTo.setMinimumDate(QtCore.QDate(2015, 1, 1))
         self.dateTo.setCalendarPopup(True)
         self.dateTo.setObjectName("dateTo")
+        self.dateTo.setFont(font)
+
         self.labelTo = QtWidgets.QLabel(SecondWindow)
         self.labelTo.setGeometry(QtCore.QRect(280, 10, 81, 20))
-        font = QtGui.QFont()
-        font.setPointSize(10)
+        # font = QtGui.QFont()
+        # font.setPointSize(10)
         self.labelTo.setFont(font)
         self.labelTo.setObjectName("labelTo")
         self.dateFrom = QtWidgets.QDateEdit(SecondWindow)
@@ -44,16 +49,18 @@ class UIStationPicker(object):
         self.dateFrom.setCalendarPopup(True)
         self.dateFrom.setCurrentSectionIndex(0)
         self.dateFrom.setObjectName("dateFrom")
+        self.dateFrom.setFont(font)
+
         self.btnSearch = QtWidgets.QPushButton(SecondWindow)
         self.btnSearch.setGeometry(QtCore.QRect(30, 330, 171, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
+        # font = QtGui.QFont()
+        # font.setPointSize(10)
         self.btnSearch.setFont(font)
         self.btnSearch.setObjectName("btnSearch")
         self.btnCancel = QtWidgets.QPushButton(SecondWindow)
         self.btnCancel.setGeometry(QtCore.QRect(230, 330, 171, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
+        # font = QtGui.QFont()
+        # font.setPointSize(10)
         self.btnCancel.setFont(font)
         self.btnCancel.setObjectName("btnCancel")
         self.listStationMainList = QtWidgets.QListWidget(SecondWindow)
@@ -73,12 +80,27 @@ class UIStationPicker(object):
         self.progressBar.setInvertedAppearance(False)
         self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
         self.progressBar.setObjectName("progressBar")
+
         self.btnAdd = QtWidgets.QPushButton(SecondWindow)
         self.btnAdd.setGeometry(QtCore.QRect(160, 110, 111, 25))
         self.btnAdd.setObjectName("btnAdd")
+        self.btnAdd.setFont(font)
+
         self.btnRemove = QtWidgets.QPushButton(SecondWindow)
         self.btnRemove.setGeometry(QtCore.QRect(160, 180, 111, 25))
         self.btnRemove.setObjectName("btnRemove")
+        self.btnRemove.setFont(font)
+
+        self.btnAddAll = QtWidgets.QPushButton(SecondWindow)
+        self.btnAddAll.setGeometry(QtCore.QRect(160, 140, 111, 25))
+        self.btnAddAll.setObjectName("btnAddAll")
+        self.btnAddAll.setFont(font)
+
+        self.btnRemoveAll = QtWidgets.QPushButton(SecondWindow)
+        self.btnRemoveAll.setGeometry(QtCore.QRect(160, 210, 111, 25))
+        self.btnRemoveAll.setObjectName("btnRemoveAll")
+        self.btnRemoveAll.setFont(font)
+
         self.labelSearchStatus = QtWidgets.QLabel(SecondWindow)
         self.labelSearchStatus.setGeometry(QtCore.QRect(30, 280, 121, 16))
         self.labelSearchStatus.setObjectName("labelSearchStatus")
@@ -89,12 +111,7 @@ class UIStationPicker(object):
         self.textDateCheck.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.textDateCheck.setMarkdown("")
         self.textDateCheck.setObjectName("textDateCheck")
-        self.btnAddAll = QtWidgets.QPushButton(SecondWindow)
-        self.btnAddAll.setGeometry(QtCore.QRect(160, 140, 111, 25))
-        self.btnAddAll.setObjectName("btnAddAll")
-        self.btnRemoveAll = QtWidgets.QPushButton(SecondWindow)
-        self.btnRemoveAll.setGeometry(QtCore.QRect(160, 210, 111, 25))
-        self.btnRemoveAll.setObjectName("btnRemoveAll")
+
 
         self.retranslateUi(SecondWindow)
         self.btnCancel.clicked.connect(SecondWindow.close)
@@ -132,7 +149,7 @@ class UIStationPicker(object):
 
     def retranslateUi(self, SecondWindow):
         _translate = QtCore.QCoreApplication.translate
-        SecondWindow.setWindowTitle(_translate("SecondWindow", "SecondWindow"))
+        SecondWindow.setWindowTitle(_translate("SecondWindow", "Multiple Station Selector"))
         self.labelFrom.setText(_translate("SecondWindow", "From Date"))
         self.labelTo.setText(_translate("SecondWindow", "To Date"))
         self.btnSearch.setText(_translate("SecondWindow", "Search"))
@@ -214,9 +231,7 @@ class UIStationPicker(object):
 
     def load_stations(self):
         # Connect to the database, return a list of active stations, close the connection
-        db = DB()
-        station_list = db.populate_location_cbo()
-        db.close()
+        station_list = populate_location_cbo()
 
         self.listStationMainList.addItems(station_list)
         self.listStationMainList.setSortingEnabled(True)

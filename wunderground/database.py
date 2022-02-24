@@ -175,15 +175,32 @@ class DB(object):
         self.cursor.executemany(sql, data)
         self.connection.commit()
 
-    def populate_location_cbo(self):
-        self.cursor.execute("SELECT location FROM tbl_location WHERE active = 1 ORDER BY location")
-        # rows = c.fetchall()
-        list_of_strings = [item[0] for item in self.cursor.fetchall()]
-
-        # self.connection.commit()
-        # self.connection.close()
-
-        return list_of_strings
+    # def populate_location_cbo(self):
+    #     self.cursor.execute("SELECT location FROM tbl_location WHERE active = 1 ORDER BY location")
+    #     # rows = c.fetchall()
+    #     list_of_strings = [item[0] for item in self.cursor.fetchall()]
+    #
+    #     # self.connection.commit()
+    #     # self.connection.close()
+    #
+    #     return list_of_strings
+    #
+    # def update_location_cbo(self, new_entry):
+    #     self.cursor.execute("SELECT COUNT(*) FROM tbl_location WHERE location = ?", [new_entry])
+    #
+    #     record_check = self.cursor.fetchone()[0]
+    #
+    #     if record_check == 0:
+    #         self.cursor.execute(
+    #                             "INSERT INTO tbl_location (location, active, date_added) VALUES(?, 1, ?)"
+    #                             , (new_entry, datetime.now().strftime('%Y-%m-%d'))
+    #         )
+    #
+    #         record_check = "updated"
+    #     self.connection.commit()
+    #     self.connection.close()
+    #
+    #     return record_check
 
     # def execute(self, statements):
     #     """Execute complete SQL statements.
@@ -413,17 +430,17 @@ def populate_location_cbo():
     return list_of_strings
 
 
-def update_location_cbo(new_entry):
-    cnn = sqlite3.connect("database/weather.db")
+def update_location_cbo(station_id):
+    cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
-    c.execute("SELECT COUNT(*) FROM tbl_location WHERE location = ?", [new_entry])
+    c.execute("SELECT COUNT(*) FROM tbl_location WHERE location = ?", [station_id])
 
     record_check = c.fetchone()[0]
 
     if record_check == 0:
         c.execute("INSERT INTO tbl_location (location, active, date_added) VALUES(?, 1, ?)"
-                  , (new_entry, datetime.now().strftime('%Y-%m-%d')))
+                  , (station_id, datetime.now().strftime('%Y-%m-%d')))
 
         record_check = "updated"
     cnn.commit()
@@ -431,12 +448,13 @@ def update_location_cbo(new_entry):
 
     return record_check
 
-def delete_location(delete_entry):
+
+def delete_location(station_id):
     cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
     # Delete the location
-    c.execute("DELETE FROM tbl_location WHERE location = ?", [delete_entry])
+    c.execute("DELETE FROM tbl_location WHERE location = ?", [station_id])
 
     if c.rowcount == 1:
         results = "Delete Successful"
@@ -449,17 +467,17 @@ def delete_location(delete_entry):
     return results
 
 
-def delete_history(delete_entry):
+def delete_history(station_id):
     cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
     # Check to see if any records exist for this location
-    c.execute("SELECT COUNT(*) FROM tbl_history WHERE location = ?", [delete_entry])
+    c.execute("SELECT COUNT(*) FROM tbl_weather_data WHERE stationID = ?", [station_id])
     record_check = c.fetchone()[0]
 
     # If records exist, delete the history data for this location
     if record_check > 0:
-        c.execute("DELETE FROM tbl_history WHERE location = ?", [delete_entry])
+        c.execute("DELETE FROM tbl_weather_data WHERE stationID = ?", [station_id])
 
         if c.rowcount > 0:
             results = "Delete Successful"
