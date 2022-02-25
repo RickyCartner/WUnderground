@@ -5,12 +5,11 @@
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 from datetime import datetime
-# from datetime import date
 import sqlite3
 
 
 class DB(object):
-    def __init__(self, database='database/weather.db', statements=None):
+    def __init__(self, database='database\\weather.db', statements=None):
         if statements is None:
             statements = []
         """Initialize a new or connect to an existing database.
@@ -25,6 +24,7 @@ class DB(object):
         # indicates if selected data is to be returned or printed
         self.display = False
 
+        # Connect to the database when initialized
         self.connect()
 
         # execute setup statements
@@ -49,29 +49,106 @@ class DB(object):
 
     def fetch_api_key(self):
 
-        self.cursor.execute("SELECT api_key FROM tbl_api_key "
-                             "WHERE primary_api_key = 1")
+        self.cursor.execute("""
+            SELECT api_key 
+            FROM tbl_api_key 
+            WHERE primary_api_key = 1""")
 
         api_key = self.cursor.fetchone()
 
-        # self.cursor.execute("select * from SQLite_master")
-
-        # tables = self.cursor.fetchall()
-        #
-        # print("Listing tables and indices from main database:")
-        #
-        # for table in tables:
-        #     print("Type of database object: %s" % (table[0]))
-        #     print("Name of the database object: %s" % (table[1]))
-        #     print("Table Name: %s" % (table[2]))
-        #     print("Root page: %s" % (table[3]))
-        #     print("SQL statement: %s" % (table[4]))
-
-
-        # self.close()
-
         return api_key
 
+    def fetch_all_api_keys(self):
+
+        self.cursor.execute("SELECT * FROM tbl_api_key")
+
+        api_keys = self.cursor.fetchall()
+        api_keys_new = []
+
+        # convert tuple to list, replace 1 and 0 values with Yes/No, convert back to tuple
+        for api in api_keys:
+            api = list(api)
+            api = ['Yes' if i == 1 else 'No' if i == 0 else i for i in api]
+            api = tuple(api)
+            api_keys_new.append(api)
+
+        return api_keys_new
+
+    def delete_api_key(self, api_key):
+
+        self.cursor.execute("""
+            SELECT api_key FROM tbl_api_key
+            WHERE api_notes = 'generic api key'""")
+
+        result = self.cursor.fetchone()
+        generic = str(result[0])
+
+        if result[0] == api_key:
+            return 'Cannot delete the Public key, you can only update it'
+
+        self.cursor.execute("DELETE FROM tbl_api_key where api_key = ?", [api_key])
+
+        if self.cursor.rowcount > 0:
+            self.connection.commit()
+            status = 'success'
+
+        self.cursor.execute("""
+            UPDATE tbl_api_key SET primary_api_key = 1 
+            WHERE api_notes = 'generic api key'""")
+
+        return status
+
+    def add_api_key(self, api_key, active):
+
+        self.cursor.execute("""
+            INSERT INTO tbl_api_key (api_key, primary_api_key) 
+            VALUES (?, ?)""", (api_key, active))
+
+        if self.cursor.rowcount > 0:
+            self.connection.commit()
+            status = 'success'
+        else:
+            status = 'fail insert'
+
+        # clear the key indicator only if the new api key should be primary
+        if active:
+            self.cursor.execute("UPDATE tbl_api_key SET primary_api_key = 0 "
+                                "WHERE primary_api_key = 1 "
+                                "AND api_key <> ?", [api_key])
+
+        self.connection.commit()
+
+        return status
+
+    def check_table_for_existing_data(self, station_id, weather_date):
+        self.weather_date = datetime.strptime(weather_date, '%Y%m%d').date().isoformat()
+
+        try:
+            self.cursor.execute(f"""
+                SELECT 1 FROM tbl_weather_data 
+                WHERE stationID = '{station_id}' 
+                AND obsTimeLocal = '{self.weather_date}'""")
+
+            rows = self.cursor.fetchone()
+            if rows is None:
+                return False
+
+        except Exception as e:
+            return True
+
+        return True
+
+    def delete_records_from_location_temp(self):
+        self.cursor.execute("DELETE FROM tbl_location_display_temp")
+        self.connection.commit()
+
+
+    def add_record_to_location_temp(self, station_id):
+        self.cursor.execute("""
+            INSERT INTO tbl_location_display_temp ('location') 
+            VALUES (?)""", (station_id,))
+
+        self.connection.commit()
 
     def execute(self, data):
         sql = '''
@@ -94,8 +171,42 @@ class DB(object):
                     , :pressureMax, :pressureMin, :pressureTrend
                     , :precipRate, :precipTotal)
             '''
-        self.cursor.executemany(sql, data)
-        self.connection.commit()
+        # self.cursor.executemany(sql, data)
+        # self.connection.commit()
+
+        # skip days that are not found
+        try:
+            self.cursor.executemany(sql, data)
+            self.connection.commit()
+        except Exception as e:
+            print(e)
+
+    # def populate_location_cbo(self):
+    #     self.cursor.execute("SELECT location FROM tbl_location WHERE active = 1 ORDER BY location")
+    #     # rows = c.fetchall()
+    #     list_of_strings = [item[0] for item in self.cursor.fetchall()]
+    #
+    #     # self.connection.commit()
+    #     # self.connection.close()
+    #
+    #     return list_of_strings
+    #
+    # def update_location_cbo(self, new_entry):
+    #     self.cursor.execute("SELECT COUNT(*) FROM tbl_location WHERE location = ?", [new_entry])
+    #
+    #     record_check = self.cursor.fetchone()[0]
+    #
+    #     if record_check == 0:
+    #         self.cursor.execute(
+    #                             "INSERT INTO tbl_location (location, active, date_added) VALUES(?, 1, ?)"
+    #                             , (new_entry, datetime.now().strftime('%Y-%m-%d'))
+    #         )
+    #
+    #         record_check = "updated"
+    #     self.connection.commit()
+    #     self.connection.close()
+    #
+    #     return record_check
 
     # def execute(self, statements):
     #     """Execute complete SQL statements.
@@ -312,7 +423,7 @@ def insert_data(table_name, list_data):
 
 
 def populate_location_cbo():
-    cnn = sqlite3.connect("database/weather.db")
+    cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
     c.execute("SELECT location FROM tbl_location WHERE active = 1 ORDER BY location")
@@ -325,17 +436,17 @@ def populate_location_cbo():
     return list_of_strings
 
 
-def update_location_cbo(new_entry):
-    cnn = sqlite3.connect("database/weather.db")
+def update_location_cbo(station_id):
+    cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
-    c.execute("SELECT COUNT(*) FROM tbl_location WHERE location = ?", [new_entry])
+    c.execute("SELECT COUNT(*) FROM tbl_location WHERE location = ?", [station_id])
 
     record_check = c.fetchone()[0]
 
     if record_check == 0:
         c.execute("INSERT INTO tbl_location (location, active, date_added) VALUES(?, 1, ?)"
-                  , (new_entry, datetime.now().strftime('%Y-%m-%d')))
+                  , (station_id, datetime.now().strftime('%Y-%m-%d')))
 
         record_check = "updated"
     cnn.commit()
@@ -343,12 +454,13 @@ def update_location_cbo(new_entry):
 
     return record_check
 
-def delete_location(delete_entry):
-    cnn = sqlite3.connect("database/weather.db")
+
+def delete_location(station_id):
+    cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
     # Delete the location
-    c.execute("DELETE FROM tbl_location WHERE location = ?", [delete_entry])
+    c.execute("DELETE FROM tbl_location WHERE location = ?", [station_id])
 
     if c.rowcount == 1:
         results = "Delete Successful"
@@ -361,17 +473,124 @@ def delete_location(delete_entry):
     return results
 
 
-def delete_history(delete_entry):
-    cnn = sqlite3.connect("database/weather.db")
+def populate_api_cbo():
+    cnn = sqlite3.connect("database\\weather.db")
+    c = cnn.cursor()
+
+    # Find list of APIs, excluding the public key
+    c.execute("SELECT api_key "
+              "FROM tbl_api_key "
+              "ORDER BY api_key")
+
+    # rows = c.fetchall()
+    # column_names = [column[0] for column in c.description]
+    # data = []
+    # r = [data.append(dict(zip(column_names, item))) for item in c.fetchall()]
+
+    api_list = [item[0] for item in c.fetchall()]
+
+    cnn.commit()
+    cnn.close()
+
+    return api_list
+
+
+def get_api_primary_key_value(api_key: str) -> str:
+    cnn = sqlite3.connect("database\\weather.db")
+    c = cnn.cursor()
+
+    # Find list of APIs, excluding the public key
+    c.execute("SELECT primary_api_key "
+              "FROM tbl_api_key "
+              "WHERE api_key = ?"
+              , [api_key])
+
+    api_key_value = c.fetchone()[0]
+    # api_key_value = row[0]
+
+    cnn.commit()
+    cnn.close()
+
+    return api_key_value
+
+
+def delete_api(api_key):
+    cnn = sqlite3.connect("database\\weather.db")
+    c = cnn.cursor()
+
+    # See if the API being deleted was the primary api key
+    c.execute("SELECT primary_api_key FROM tbl_api_key WHERE api_key = ?", [api_key])
+    primary_key = c.fetchone()[0]
+
+    # if the API being deleted was the primary, set the public key back to the primary
+    if primary_key == 1:
+        c.execute(
+            "UPDATE tbl_api_key "
+            "SET primary_api_key = 1 "
+            "WHERE api_key = 'e1f10a1e78da46f5b10a1e78da96f525'"
+        )
+
+    # Delete the api key
+    c.execute("DELETE FROM tbl_api_key WHERE api_key = ?", [api_key])
+
+    if c.rowcount == 1:
+        results = "Delete Successful"
+    else:
+        results = "Error deleting api"
+
+    cnn.commit()
+    cnn.close()
+
+    return results
+
+
+# def update_api_key(api_key: str, primary_key: int, notes: str) -> str:
+def update_api_key(api_list: list) -> str:
+    cnn = sqlite3.connect("database\\weather.db")
+    c = cnn.cursor()
+
+    c.execute("SELECT COUNT(*) FROM tbl_api_key WHERE api_key = ? AND primary_api_key = ?", (api_list[0], api_list[1]))
+
+    record_check = c.fetchone()[0]
+
+    if record_check == 0:
+        c.execute("INSERT OR REPLACE INTO tbl_api_key (api_key, primary_api_key, api_notes) VALUES(?, ?, ?)"
+                  , (api_list[0], api_list[1], api_list[2]))
+
+        # Check is execution was successful 1 = success, 0 = fail
+        if c.rowcount == 1:
+
+            if api_list[1] == 1:
+                c.execute(
+                    "UPDATE tbl_api_key "
+                    "SET primary_api_key = 0 "
+                    "WHERE api_key <> ? "
+                    , [api_list[0]])
+
+        else:
+            record_check = "update failed"
+
+        record_check = "updated"
+    else:
+        record_check = "Record already exists"
+
+    cnn.commit()
+    cnn.close()
+
+    return record_check
+
+
+def delete_history(station_id):
+    cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
     # Check to see if any records exist for this location
-    c.execute("SELECT COUNT(*) FROM tbl_history WHERE location = ?", [delete_entry])
+    c.execute("SELECT COUNT(*) FROM tbl_weather_data WHERE stationID = ?", [station_id])
     record_check = c.fetchone()[0]
 
     # If records exist, delete the history data for this location
     if record_check > 0:
-        c.execute("DELETE FROM tbl_history WHERE location = ?", [delete_entry])
+        c.execute("DELETE FROM tbl_weather_data WHERE stationID = ?", [station_id])
 
         if c.rowcount > 0:
             results = "Delete Successful"
@@ -387,7 +606,7 @@ def delete_history(delete_entry):
 
 
 def fetch_records(location, record_date, table_name):
-    cnn = sqlite3.connect("database/weather.db")
+    cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
     if table_name == "tbl_location":
         c.execute("SELECT COUNT(*) FROM tbl_location WHERE location = ? AND record_date = ?", (location, record_date))
@@ -408,7 +627,7 @@ def fetch_records(location, record_date, table_name):
 
 
 def fetch_history_records(location, from_date, to_date):
-    cnn = sqlite3.connect("database/weather.db")
+    cnn = sqlite3.connect("database\\weather.db")
     c = cnn.cursor()
 
     c.execute("SELECT * FROM tbl_history "
@@ -424,6 +643,33 @@ def fetch_history_records(location, from_date, to_date):
     return data_list
 
 
+def create_connection(action: str):
+    """Create and open a database connection."""
+    connection = QSqlDatabase.addDatabase("QSQLITE")
+    connection.setDatabaseName('database\\weather.db')
+
+    if not connection.open():
+        QMessageBox.warning(
+            None,
+            "API Key",
+            f"Database Error: {connection.lastError().text()}",
+        )
+        return False
+
+    try:
+        if action == 'createAPI':
+            # Attempt to create the API table
+            # _createApiTable()
+            pass
+        elif action == 'closeDB':
+            # Clean up the database connections
+            connection.close()
+            QSqlDatabase.removeDatabase(QSqlDatabase.database().connectionName())
+
+    except Exception as e:
+        return e
+
+    return True
 
 
 def databaseConnection(database_name, action, table_name, list_data):
