@@ -35,7 +35,7 @@ class MonthlyModel:
         self.model = self.create_model()
 
     def create_model(self):
-        """Create and set up the model."""
+        """ Create and set up the model """
 
         table_query = QSqlQuery("weather.db")
         if self.multi_station:

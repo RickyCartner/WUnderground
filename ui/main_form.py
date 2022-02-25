@@ -599,9 +599,11 @@ class Ui_WUnderground(object):
         font.setPointSize(9)
         self.label_16.setFont(font)
         self.label_16.setObjectName("label_16")
+
         self.widgetChart_CurrentQuarter = QtWidgets.QWidget(self.frame_9)
         self.widgetChart_CurrentQuarter.setGeometry(QtCore.QRect(10, 40, 251, 111))
         self.widgetChart_CurrentQuarter.setObjectName("widgetChart_CurrentQuarter")
+
         self.label_17 = QtWidgets.QLabel(self.frame_9)
         self.label_17.setGeometry(QtCore.QRect(30, 190, 161, 16))
         font = QtGui.QFont()
