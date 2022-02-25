@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 
-import sys
+# Standard library imports
 from datetime import date, timedelta
-from time import sleep
 
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QListWidget\
-    , QLabel, QDateEdit, QPushButton, QProgressBar, QTextEdit, QAbstractItemView
+# Third party imports
+from PyQt5.QtWidgets import QAbstractItemView, QMessageBox
+    # QApplication, QWidget, QMainWindow, QListWidget\
+    # , QLabel, QDateEdit, QPushButton, QProgressBar, QTextEdit,
 from PyQt5 import uic, QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QDate, QDateTime
+# from PyQt5.QtCore import QDate, QDateTime
 
-# Local
+# Local imports
 from wunderground.database import DB, populate_location_cbo
 from wunderground.api import history_day
 from wunderground.model import MonthlyModel
 
 
 class UIStationPicker(object):
-    def setupUi(self, SecondWindow, MainWindow):
+    def setup_ui(self, SecondWindow, MainWindow):
         SecondWindow.setObjectName("SecondWindow")
         SecondWindow.resize(433, 409)
 
@@ -71,6 +72,7 @@ class UIStationPicker(object):
         self.listStationSearch.setGeometry(QtCore.QRect(280, 70, 121, 192))
         self.listStationSearch.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.listStationSearch.setObjectName("listStationSearch")
+
         self.progressBar = QtWidgets.QProgressBar(SecondWindow)
         self.progressBar.setVisible(False)
         self.progressBar.setEnabled(False)
@@ -104,14 +106,6 @@ class UIStationPicker(object):
         self.labelSearchStatus = QtWidgets.QLabel(SecondWindow)
         self.labelSearchStatus.setGeometry(QtCore.QRect(30, 280, 121, 16))
         self.labelSearchStatus.setObjectName("labelSearchStatus")
-        self.textDateCheck = QtWidgets.QTextEdit(SecondWindow)
-        self.textDateCheck.setGeometry(QtCore.QRect(30, 370, 371, 21))
-        self.textDateCheck.setStyleSheet("color: rgb(170, 0, 0);")
-        self.textDateCheck.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textDateCheck.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textDateCheck.setMarkdown("")
-        self.textDateCheck.setObjectName("textDateCheck")
-
 
         self.retranslateUi(SecondWindow)
         self.btnCancel.clicked.connect(SecondWindow.close)
@@ -124,8 +118,7 @@ class UIStationPicker(object):
         SecondWindow.setTabOrder(self.btnAddAll, self.btnRemove)
         SecondWindow.setTabOrder(self.btnRemove, self.btnRemoveAll)
         SecondWindow.setTabOrder(self.btnRemoveAll, self.btnSearch)
-        SecondWindow.setTabOrder(self.btnSearch, self.textDateCheck)
-        SecondWindow.setTabOrder(self.textDateCheck, self.btnCancel)
+        SecondWindow.setTabOrder(self.btnSearch, self.btnCancel)
 
 
         self.load_stations()
@@ -136,8 +129,8 @@ class UIStationPicker(object):
         self.dateTo.setDate(date.today() - timedelta(days=1))
         self.dateTo.setMaximumDate(date.today() - timedelta(days=1))
 
-        self.dateFrom.dateChanged.connect(self.date_changed)
-        self.dateTo.dateChanged.connect(self.date_changed)
+        # self.dateFrom.dateChanged.connect(self.date_changed)
+        # self.dateTo.dateChanged.connect(self.date_changed)
         self.btnSearch.clicked.connect(lambda: self.search_clicked(MainWindow))
         self.btnAdd.clicked.connect(self.add_station)
         self.btnAddAll.clicked.connect(lambda x: self.add_station(True))
@@ -157,11 +150,6 @@ class UIStationPicker(object):
         self.btnAdd.setText(_translate("SecondWindow", "Add >"))
         self.btnRemove.setText(_translate("SecondWindow", "< Remove"))
         self.labelSearchStatus.setText(_translate("SecondWindow", "Search Status"))
-        self.textDateCheck.setHtml(_translate("SecondWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:7.8pt;\"><br /></p></body></html>"))
         self.btnAddAll.setText(_translate("SecondWindow", "Add All >>"))
         self.btnRemoveAll.setText(_translate("SecondWindow", "<< Remove All"))
 
@@ -174,8 +162,12 @@ class UIStationPicker(object):
         to_date = t_date.toString('yyyyMMdd')
 
         if f_date > t_date:
-            self.textDateCheck.setPlainText(f'From Date cannot be prior to To Date')
-            return
+            msgbox = QMessageBox()
+            msgbox.setIcon(QMessageBox.Critical)
+            msgbox.setText("From Date cannot be prior to To Date")
+            msgbox.setWindowTitle("Error")
+            msgbox.setStandardButtons(QMessageBox.Ok)
+            return msgbox.exec_()
 
         self.progressBar.setValue(0)
         self.progressBar.setVisible(True)
@@ -242,10 +234,9 @@ class UIStationPicker(object):
         self.listStationMainList.sortItems()
         self.listStationSearch.sortItems()
 
-    def date_changed(self, qDate):
-        # print(f'{qDate.month()}/{qDate.day()}/{qDate.year()}')
-        self.textDateCheck.clear()
-        # self.textDateCheck.setPlainText(f'{qDate.month()}/{qDate.day()}/{qDate.year()}')
+    # def date_changed(self, qDate):
+    #     # print(f'{qDate.month()}/{qDate.day()}/{qDate.year()}')
+    #     self.textDateCheck.clear()
 
     def add_station(self, all_stations=False):
         """
@@ -289,6 +280,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     SecondWindow = QtWidgets.QWidget()
     ui = UIStationPicker()
-    ui.setupUi(SecondWindow)
+    ui.setup_ui(SecondWindow)
     SecondWindow.show()
     sys.exit(app.exec_())

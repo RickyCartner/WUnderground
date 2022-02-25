@@ -5,7 +5,6 @@
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 from datetime import datetime
-# from datetime import date
 import sqlite3
 
 
@@ -172,8 +171,15 @@ class DB(object):
                     , :pressureMax, :pressureMin, :pressureTrend
                     , :precipRate, :precipTotal)
             '''
-        self.cursor.executemany(sql, data)
-        self.connection.commit()
+        # self.cursor.executemany(sql, data)
+        # self.connection.commit()
+
+        # skip days that are not found
+        try:
+            self.cursor.executemany(sql, data)
+            self.connection.commit()
+        except Exception as e:
+            print(e)
 
     # def populate_location_cbo(self):
     #     self.cursor.execute("SELECT location FROM tbl_location WHERE active = 1 ORDER BY location")
@@ -465,6 +471,113 @@ def delete_location(station_id):
     cnn.close()
 
     return results
+
+
+def populate_api_cbo():
+    cnn = sqlite3.connect("database\\weather.db")
+    c = cnn.cursor()
+
+    # Find list of APIs, excluding the public key
+    c.execute("SELECT api_key "
+              "FROM tbl_api_key "
+              "ORDER BY api_key")
+
+    # rows = c.fetchall()
+    # column_names = [column[0] for column in c.description]
+    # data = []
+    # r = [data.append(dict(zip(column_names, item))) for item in c.fetchall()]
+
+    api_list = [item[0] for item in c.fetchall()]
+
+    cnn.commit()
+    cnn.close()
+
+    return api_list
+
+
+def get_api_primary_key_value(api_key: str) -> str:
+    cnn = sqlite3.connect("database\\weather.db")
+    c = cnn.cursor()
+
+    # Find list of APIs, excluding the public key
+    c.execute("SELECT primary_api_key "
+              "FROM tbl_api_key "
+              "WHERE api_key = ?"
+              , [api_key])
+
+    api_key_value = c.fetchone()[0]
+    # api_key_value = row[0]
+
+    cnn.commit()
+    cnn.close()
+
+    return api_key_value
+
+
+def delete_api(api_key):
+    cnn = sqlite3.connect("database\\weather.db")
+    c = cnn.cursor()
+
+    # See if the API being deleted was the primary api key
+    c.execute("SELECT primary_api_key FROM tbl_api_key WHERE api_key = ?", [api_key])
+    primary_key = c.fetchone()[0]
+
+    # if the API being deleted was the primary, set the public key back to the primary
+    if primary_key == 1:
+        c.execute(
+            "UPDATE tbl_api_key "
+            "SET primary_api_key = 1 "
+            "WHERE api_key = 'e1f10a1e78da46f5b10a1e78da96f525'"
+        )
+
+    # Delete the api key
+    c.execute("DELETE FROM tbl_api_key WHERE api_key = ?", [api_key])
+
+    if c.rowcount == 1:
+        results = "Delete Successful"
+    else:
+        results = "Error deleting api"
+
+    cnn.commit()
+    cnn.close()
+
+    return results
+
+
+# def update_api_key(api_key: str, primary_key: int, notes: str) -> str:
+def update_api_key(api_list: list) -> str:
+    cnn = sqlite3.connect("database\\weather.db")
+    c = cnn.cursor()
+
+    c.execute("SELECT COUNT(*) FROM tbl_api_key WHERE api_key = ? AND primary_api_key = ?", (api_list[0], api_list[1]))
+
+    record_check = c.fetchone()[0]
+
+    if record_check == 0:
+        c.execute("INSERT OR REPLACE INTO tbl_api_key (api_key, primary_api_key, api_notes) VALUES(?, ?, ?)"
+                  , (api_list[0], api_list[1], api_list[2]))
+
+        # Check is execution was successful 1 = success, 0 = fail
+        if c.rowcount == 1:
+
+            if api_list[1] == 1:
+                c.execute(
+                    "UPDATE tbl_api_key "
+                    "SET primary_api_key = 0 "
+                    "WHERE api_key <> ? "
+                    , [api_list[0]])
+
+        else:
+            record_check = "update failed"
+
+        record_check = "updated"
+    else:
+        record_check = "Record already exists"
+
+    cnn.commit()
+    cnn.close()
+
+    return record_check
 
 
 def delete_history(station_id):

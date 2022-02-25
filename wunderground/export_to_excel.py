@@ -3,7 +3,6 @@
 from openpyxl.utils import get_column_letter
 from openpyxl import Workbook
 
-import database
 import os
 import tempfile
 
@@ -60,28 +59,6 @@ def open_excel(table_data):
         for row, value in enumerate(table_data):
             for col, (k, v) in enumerate(value.items()):
                 sht.cell(row=row+2, column=col+1).value = v  # Website alias
-
-        # i_row += 1
-        # for x in data_list:
-        #     sht.cell(row=i_row, column=1).value = x[1]  # Website alias
-        #     sht.cell(row=i_row, column=2).value = x[2]  # Record Date
-        #     sht.cell(row=i_row, column=3).value = x[3]  # Temp High
-        #     sht.cell(row=i_row, column=4).value = x[4]  # Temp Average
-        #     sht.cell(row=i_row, column=5).value = x[5]  # Temp Low
-        #     sht.cell(row=i_row, column=6).value = x[6]  # Dew Point High
-        #     sht.cell(row=i_row, column=7).value = x[7]  # Dew Point Average
-        #     sht.cell(row=i_row, column=8).value = x[8]  # Dew Point Low
-        #     sht.cell(row=i_row, column=9).value = x[9]  # Humidity High
-        #     sht.cell(row=i_row, column=10).value = x[10]  # Humidity Average
-        #     sht.cell(row=i_row, column=11).value = x[11]  # Humidity Low
-        #     sht.cell(row=i_row, column=12).value = x[12]  # Speed High
-        #     sht.cell(row=i_row, column=13).value = x[13]  # Speed Average
-        #     sht.cell(row=i_row, column=14).value = x[14]  # Speed Low
-        #     sht.cell(row=i_row, column=15).value = x[15]  # Pressure High
-        #     sht.cell(row=i_row, column=16).value = x[16]  # Pressure Low
-        #     sht.cell(row=i_row, column=17).value = x[17]  # Precipitation
-        #
-        #     i_row += 1
 
     except Exception as e:
         print("An unexpected error occurred")

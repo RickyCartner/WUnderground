@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # wunderground/main.py
 
-"""This module provides RP Contacts application."""
+""" This module provides the WUnderground application """
 
+# Standard library imports
 import sys
 import os
 
@@ -10,9 +11,12 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
+# Third party imports
 from PyQt5.QtWidgets import QApplication
+
+# Local imports
 from wunderground.database import create_connection, DB
-from .views_working import Window, ApiUi
+from wunderground.views import Window #, ApiUi
 
 
 def main():
